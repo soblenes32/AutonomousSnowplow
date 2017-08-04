@@ -1,0 +1,137 @@
+
+button.fix-icon > i {
+	vertical-align: middle;
+	margin-right: 16px;
+}
+
+.background0 {
+	background-image: url("../images/placeholder_background.jpg");
+	background-repeat: no-repeat;
+	background-position: center; 
+}
+.background1 {
+	background-image: url("../images/placeholder_newemployee.jpg");
+	background-repeat: no-repeat;
+	background-position: center; 
+}
+.background-graduate {
+	background-image: url("../images/placeholder_graduate.jpg");
+	background-repeat: no-repeat;
+	background-position: center; 
+}
+.background-medstudent {
+	background-image: url("../images/placeholder_medstudent.jpg");
+	background-repeat: no-repeat;
+	background-position: center; 
+}
+
+/* Toolbar */
+
+.md-avatar{
+	max-width: 24px;
+	max-height: 24px;
+}
+
+/* Sidenav */
+md-sidenav, 
+md-sidenav.md-locked-open, 
+md-sidenav.md-closed.md-locked-open-add-active {
+    min-width: 250px;
+    width: 250px;
+}
+.active{
+	background-color: rgba(0,0,0,0.1);	
+}
+.ie-min-width{
+	min-width:250px;
+}
+
+/* Toast styles */
+.success>div.md-toast-content{background-color: #009B48;}
+.error>div.md-toast-content{background-color: #BE4D00;}
+
+
+/* Profile page styles */
+.profile-image{
+	width:120px; 
+	height:120px; 
+	border-style: solid; 
+	border-width:1px;
+	float: left;
+    overflow: hidden;
+}
+.profile-image.image-small{
+	width:70px; 
+	height:70px; 
+}
+.profile-image.image-xsmall{
+	width:45px; 
+	height:45px; 
+}
+/* If the image is in a list, use list-margin to give it some room */
+.profile-image.list-margin{
+	margin-right:10px; 
+}
+.profile-image.image-tiny{
+	border:none;
+	width:24px; 
+	height:24px; 
+}
+.profile-image.image-round{
+	border-radius: 50%;
+}
+
+.profile-image>img{
+	object-fit:cover;
+	width:auto;
+	height:100%;
+	display: block;
+}
+.profile-image>div>span{
+	font-size:10px;
+}
+.hint {
+	/* Copy styles from ng-messages */
+	font-size: 10px;
+	line-height: 14px;
+	transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+	color: grey; 
+}
+.md-chips .md-chip-input-container md-autocomplete input {
+    width: 400px;
+}
+
+/* Angular calendar height workaround */
+.cal-disabled {
+	opacity:0.3;
+	background:#c5c5c5;
+	cursor:auto !important;
+}
+.cal-selected{
+	background:rgb(255,64,129);
+}
+.clickthrough{
+	pointer-events: none;
+}
+.fc th, .fc td{
+	cursor:pointer;
+}
+
+/*  */
+.faux-card{
+	 border-radius: 3px;
+	 margin: 7px;
+	 padding: 7px;
+	 background: #fff;
+}
+.faux-card md-toolbar{
+	/* width: calc(100% + 14px);
+	margin:-7px; */ 
+	padding:0px; 
+	border-top-right-radius:3px; 
+	border-top-left-radius:3px;
+	margin-bottom:5px;
+}
+.no-x-scroll{
+	overflow-x: hidden;
+}

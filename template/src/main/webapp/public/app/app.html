@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="webjars/angular-material/1.1.1/angular-material.min.css">
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" type="text/css" href="webjars/font-awesome/4.6.3/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="webjars/dropzone/4.3.0/min/dropzone.min.css">
+	<link rel="stylesheet" type="text/css" href="webjars/fullcalendar/3.0.1/dist/fullcalendar.css">
+	<link rel="stylesheet" type="text/css" href="webjars/material-steppers/1.0.3/dist/material-steppers.min.css">
+	<link rel="stylesheet" type="text/css" href="webjars/angular-material-datetimepicker/1.4.0/css/material-datetimepicker.min.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	
+	
+
+	<!-- JQuery -->
+	<script type="text/javascript" src="webjars/jquery/2.2.2/jquery.min.js"></script>
+	
+	<!-- Angular -->
+	<script type="text/javascript" src="webjars/angularjs/1.6.0/angular.min.js"></script>
+	<script type="text/javascript" src="webjars/angular-route/1.6.1/angular-route.min.js"></script>
+	<script type="text/javascript" src="webjars/angular-animate/1.6.1/angular-animate.min.js"></script>
+	<script type="text/javascript" src="webjars/angular-aria/1.6.1/angular-aria.min.js"></script>
+	<script type="text/javascript" src="webjars/angular-messages/1.6.1/angular-messages.min.js"></script>
+	<script type="text/javascript" src="webjars/angular-material/1.1.1/angular-material.min.js"></script>
+	
+	<!-- angular-calendar -->
+	<script type="text/javascript" src="webjars/moment/2.17.0/min/moment.min.js"></script>
+	<script type="text/javascript" src="webjars/angular-ui-calendar/1.0.2/calendar.js"></script>
+	<script type="text/javascript" src="webjars/fullcalendar/3.0.1/dist/fullcalendar.min.js"></script>
+	<script type="text/javascript" src="webjars/fullcalendar/3.0.1/dist/gcal.js"></script>
+	
+	<!-- angular-stepper -->
+	<script type="text/javascript" src="webjars/material-steppers/1.0.3/dist/material-steppers.min.js"></script>
+	
+	<!-- datetime picker -->
+	<script type="text/javascript" src="webjars/angular-material-datetimepicker/1.4.0/js/angular-material-datetimepicker.min.js"></script>
+	
+	
+	<!-- dropzone -->
+	<script type="text/javascript" src="webjars/dropzone/4.3.0/min/dropzone.min.js"></script>
+	
+	<script type="text/javascript" src="app/app.js"></script>
+	
+	<!-- Polyfils -->
+	<script type="text/javascript" src="libs/array-find-polyfill.js"></script>
+	
+	<!-- Controllers -->
+	<script type="text/javascript" src="app/components/newuser/newUserController.js"></script>
+	<script type="text/javascript" src="app/components/home/homeController.js"></script>
+	<script type="text/javascript" src="app/components/profile/profileController.js"></script>
+	<script type="text/javascript" src="app/components/toolbar/toolbarController.js"></script>
+	<script type="text/javascript" src="app/components/sidenav/sidenavController.js"></script>
+	<script type="text/javascript" src="app/components/newrotation/newRotationController.js"></script>
+	<script type="text/javascript" src="app/components/usersearch/userSearchController.js"></script>
+	<script type="text/javascript" src="app/components/findrotation/findRotationController.js"></script>
+	<script type="text/javascript" src="app/components/rotationsummary/rotationSummaryController.js"></script>
+	<script type="text/javascript" src="app/components/viewprofile/viewProfileController.js"></script>
+	<script type="text/javascript" src="app/components/roleapprovals/approvalsController.js"></script>
+	<script type="text/javascript" src="app/components/instaffiliations/instAffiliationsController.js"></script>
+	
+	<!-- Services -->
+	<script type="text/javascript" src="app/services/modelService.js"></script>
+	<script type="text/javascript" src="app/services/rotationSearchService.js"></script>
+	<script type="text/javascript" src="app/services/newRotationService.js"></script>
+	<script type="text/javascript" src="app/services/userAjaxService.js"></script>
+	<script type="text/javascript" src="app/services/userPermissionService.js"></script>
+	<script type="text/javascript" src="app/services/viewProfileService.js"></script>
+	<script type="text/javascript" src="app/services/fileAjaxService.js"></script>
+	<script type="text/javascript" src="app/services/rotationAjaxService.js"></script>
+	<script type="text/javascript" src="app/services/institutionProgCoordinatorAjaxService.js"></script>
+	<script type="text/javascript" src="app/services/siteAdministratorAjaxService.js"></script>
+	<script type="text/javascript" src="app/services/roleAjaxService.js"></script>
+	<script type="text/javascript" src="app/services/rotationFileAjaxService.js"></script>
+	<script type="text/javascript" src="app/services/institutionAffiliationFileAjaxService.js"></script>
+	<script type="text/javascript" src="app/services/institutionAffiliationAjaxService.js"></script>
+	
+	<!-- Directives -->
+	<script type="text/javascript" src="app/directives/compareToDirective.js"></script>
+	
+	<base href="/ctt/">
+</head>
+<body ng-app="CTTApp" ng-controller="primaryCtrl" layout="column">
+	<!-- Main display -->
+	<ng-view flex layout="row" style="height:100%"></ng-view>
+</body>
+</html>

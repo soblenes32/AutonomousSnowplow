@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<title>Clinical Training Tracking</title>
+	<link rel="stylesheet" type="text/css" href="webjars/angular-material/1.1.1/angular-material.min.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+
+	<script type="text/javascript" src="webjars/angularjs/1.6.0/angular.min.js"></script>
+	<script type="text/javascript" src="webjars/angular-animate/1.6.1/angular-animate.min.js"></script>
+	<script type="text/javascript" src="webjars/angular-aria/1.6.1/angular-aria.min.js"></script>
+	<script type="text/javascript" src="webjars/angular-messages/1.6.1/angular-messages.min.js"></script>
+	<script type="text/javascript" src="webjars/angular-material/1.1.1/angular-material.min.js"></script>
+	
+	<base href="/ctt/">
+</head>
+
+<style>
+body{
+	background-image: url("images/placeholder_background.jpg");
+	background-repeat: no-repeat;
+}
+</style>
+
+<script>
+angular.module("CTTAppSignin",["ngMaterial"])
+.config(['$mdThemingProvider', function($mdThemingProvider){
+	$mdThemingProvider.definePalette('healthPartnersBrandPalette', {
+		'50': '009B48',
+		'100': '522398',
+		'200': '3D7EDB',
+		'300': 'D9C89E',
+		'400': 'E1CD00',
+		'500': '2C5697',
+		'600': 'BE4D00',
+		'700': 'B5BD00',
+		'800': '84BD00',
+		'900': '2DCCD3',
+		'A100': '009CDE',
+		'A200': 'F2A900',
+		'A400': '9595D2',
+		'A700': 'F64B7F',
+		'A800': '833177',
+		'contrastDefaultColor': 'light',    // whether, by default, text (contrast) on this palette should be dark or light
+		'contrastDarkColors': ['50', '100', '200', '300', '400', 'A100'], //hues which contrast should be 'dark' by default
+		'contrastLightColors': undefined    // could also specify this if default was 'dark'
+	});
+	$mdThemingProvider.theme('default')
+	    .primaryPalette('healthPartnersBrandPalette');
+}])
+.controller("signinCtrl", function($scope, $window){
+	$scope.window = $window;
+})
+</script>
+
+<body ng-app="CTTAppSignin" ng-controller="signinCtrl">
+<form action="j_spring_security_check" method="post">
+	<div layout="row" layout-align="center">
+		<md-card layout-padding style="width:450px;">
+			<md-card-title>
+				<md-card-title-text layout="column" layout-align="center center">
+					<img src="images/HPI_logo_big.png" style="width:400px; height:auto;">
+					<h1>Clinical Training Tracking</h1>
+					<h3 style="color:red;">Unable to authenticate. Please try again.</h3>
+				</md-card-title-text>
+			</md-card-title>
+			<md-card-content>
+				<md-input-container class="md-block md-icon-left">
+					<label>Email address or HealthPartners ID</label>
+					<md-icon md-font-library="material-icons" class="md-hue-3">person</md-icon>
+					<input type="text" name="j_username" autofocus>
+				</md-input-container>
+				 
+				<md-input-container class="md-block md-icon-left">
+					<label>Password</label>
+					<md-icon md-font-library="material-icons" class="md-hue-4">lock</md-icon>
+					<input type="password" name="j_password" autocomplete="off"><span class="highlight"></span><span class="bar"></span>
+				</md-input-container>
+				
+				<div layout="row" flex>
+					<md-button type="submit" class="md-primary md-hue-4 md-raised" layout-fill>Sign in</md-button>
+				</div>
+			</md-card-content>
+		</md-card>
+	</div>
+</form>
+<form>
+	<div layout="row" layout-align="center">
+		<md-card layout-padding style="width:450px;">
+			<md-card-content>
+				<div layout="row" flex>
+					<md-button type="submit" class="md-secondary md-hue-4 md-raised" ng-href="newuser" layout-fill>
+						<md-icon md-font-library="material-icons" class="md-hue-4">person_add</md-icon>
+						Create account
+					</md-button>
+					<md-button type="submit" class="md-secondary md-hue-4 md-raised" layout-fill>
+						<md-icon md-font-library="material-icons" class="md-hue-4">lock_open</md-icon>
+						Recover password
+					</md-button>
+				</div>
+			</md-card-content>
+		</md-card>
+	</div>
+</form>
+
+</body>
+</html>

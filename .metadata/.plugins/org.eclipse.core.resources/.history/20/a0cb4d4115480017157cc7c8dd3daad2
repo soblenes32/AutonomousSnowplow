@@ -1,0 +1,97 @@
+package com.asl.snowplow.service;
+
+import java.awt.Point;
+
+import javax.inject.Inject;
+
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.springframework.stereotype.Service;
+
+import com.asl.snowplow.model.WorldState;
+
+@Service
+public class VehicleInstructionService {
+	
+	@Inject
+	WorldState worldState;
+	
+	/************************************************************************************************************
+	 * Decision policy for moveDirectlyToCoordinate
+	 * 
+	 * Absolute angle to destination
+	 * < 15 degrees: move forward on with left/right track offset speed to turn toward target
+	 * >= 15 degrees: rotate in place toward target
+	 * 
+	 * Distance to destination
+	 * < 0.25 meters: stop
+	 * 0.25 - 2.0 meters: scale max target speed to distance / 2
+	 * > 2.0 meters: full speed
+	 ************************************************************************************************************/
+	public void moveDirectlyToCoordinate(Point p){
+		Point position = worldState.getVehicleState().getPosition();
+		double distancemm = p.distance(position);
+		double distancem = distancemm * 1000;
+		float leftMotor = 0;
+		float rightMotor = 0;
+		
+		//Angle is < 15 degrees
+		double angle = calculateRotationToCoordinates(p, true);
+		if(Math.abs(angle) < 15){
+			if(distancem < 0.25){
+				leftMotor = 0;
+				rightMotor = 0;
+			}else if(distancem > 0.25 && distancem < 2.0){
+				leftMotor = (float) distancem / 2;
+				rightMotor = (float) distancem / 2;
+			}else{
+				leftMotor = 1;
+				rightMotor = 1;
+			}
+			
+			leftMotor *= 1 + (angle * 0.01);
+			rightMotor *= 1 - (angle * 0.01);
+		}else{
+			leftMotor = (float) (1 + (angle * 0.01));
+			rightMotor = (float) (1 - (angle * 0.01));
+		}
+		
+		worldState.getVehicleState().setMotorATarget(leftMotor);
+		worldState.getVehicleState().setMotorBTarget(rightMotor);
+	}
+	
+	/************************************************************************************************************
+	 * Come to a halt
+	 ************************************************************************************************************/
+	public void stop(){
+		worldState.getVehicleState().setMotorATarget(0);
+		worldState.getVehicleState().setMotorBTarget(0);
+	}
+	
+	/************************************************************************************************************
+	 * Calculate the magnitude of rotation required for vehicle to face the specified point.
+	 * A positive angle means that a righthand turn is optimal to face the target. Negative angle means that a
+	 * lefthand turn should be used to face the target.
+	 * 
+	 * @param Point p - The point that the vehicle should face
+	 * @Param isDegrees - if false, then outputs radians. If true, then outputs degrees
+	 * @return angle between current orientation of vehicle and the target point
+	 ************************************************************************************************************/
+	public double calculateRotationToCoordinates(Point p){
+		return calculateRotationToCoordinates(p, false);
+	}
+	public double calculateRotationToCoordinates(Point p, boolean isDegrees){
+		Point position = worldState.getVehicleState().getPosition();
+		Vector3D orientationVector = worldState.getVehicleState().getOrientation();
+		Vector3D positionOffset = new Vector3D(p.x - position.x, p.y - position.y, 0);
+		double angle = Math.atan2(orientationVector.getY(),orientationVector.getX()) - Math.atan2(positionOffset.getY(),positionOffset.getX());
+		//Ensure that angle is +/- 2PI
+		angle = angle % (2 * Math.PI);
+		//Confine angle between [-180, 180]
+		//If angle is less than -180 degrees, add 180 degrees and flip the sign
+		angle = (angle < -1 * Math.PI)?((angle + Math.PI) * -1):angle;
+		angle = (angle > Math.PI)?((angle - Math.PI) * -1):angle;
+		//If call was specified as degrees, convert units
+		angle = (isDegrees)?Math.toDegrees(angle):angle;
+		return angle;
+	}
+}

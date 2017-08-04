@@ -1,0 +1,346 @@
+package com.asl.snowplow.service;
+
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.springframework.stereotype.Service;
+
+import com.asl.snowplow.model.WorldState;
+import com.asl.snowplow.model.ZoneCell;
+
+@Service
+public class VehicleInstructionService {
+	
+	@Inject
+	WorldState worldState;
+	
+	/************************************************************************************************************
+	 * Decision policy for moveDirectlyToCoordinate
+	 * 
+	 * Absolute angle to destination
+	 * < 15 degrees: move forward on with left/right track offset speed to turn toward target
+	 * >= 15 degrees: rotate in place toward target
+	 * 
+	 * Distance to destination
+	 * < 0.25 meters: stop & finish
+	 * 0.25 - 2.0 meters: scale max target speed to distance / 2
+	 * > 2.0 meters: full speed
+	 * 
+	 * @return true if arrived at destination, false otherwise
+	 ************************************************************************************************************/
+	public boolean moveDirectlyToCoordinate(Point p){
+		Point position = worldState.getVehicleState().getPosition();
+		double distancemm = p.distance(position);
+		double distancem = distancemm / 1000;
+		float leftMotor = 0;
+		float rightMotor = 0;
+		
+		//Arrived at destination
+		if(distancem <= 0.25){
+			worldState.getVehicleState().setMotorATarget(0);
+			worldState.getVehicleState().setMotorBTarget(0);
+			return true;
+		}
+		
+		//Angle is < 15 degrees
+		double angle = calculateRotationToCoordinates(p, true);
+		if(Math.abs(angle) < 15){
+			if(distancem < 2.0){ //start slowing down if < 2 meters
+				leftMotor = (float) distancem / 2;
+				rightMotor = (float) distancem / 2;
+			}else{ //Maintain full speed
+				leftMotor = 1;
+				rightMotor = 1;
+			}
+			
+			leftMotor *= 1 + (angle * 0.001);
+			rightMotor *= 1 - (angle * 0.001);
+		}else{
+			leftMotor = (float) (angle / 180) / 4;
+			rightMotor = (float) (angle / -180) / 4;
+		}
+		
+		worldState.getVehicleState().setMotorATarget(leftMotor);
+		worldState.getVehicleState().setMotorBTarget(rightMotor);
+		return false;
+	}
+	
+	/************************************************************************************************************
+	 * Come to a halt
+	 ************************************************************************************************************/
+	public void stop(){
+		worldState.getVehicleState().setMotorATarget(0);
+		worldState.getVehicleState().setMotorBTarget(0);
+	}
+	
+	/************************************************************************************************************
+	 * Calculate the magnitude of rotation required for vehicle to face the specified point.
+	 * A positive angle means that a righthand turn is optimal to face the target. Negative angle means that a
+	 * lefthand turn should be used to face the target.
+	 * 
+	 * @param Point p - The point that the vehicle should face
+	 * @Param isDegrees (default = false) - if false, then outputs radians. If true, then outputs degrees
+	 * @return angle between current orientation of vehicle and the target point
+	 ************************************************************************************************************/
+	public double calculateRotationToCoordinates(Vector3D p){
+		return calculateRotationToCoordinates(p, false);
+	}
+	public double calculateRotationToCoordinates(Point p, boolean isDegrees){
+		return calculateRotationToCoordinates(new Vector3D(p.x, p.y, 0),isDegrees); 
+	}
+	public double calculateRotationToCoordinates(Vector3D p, boolean isDegrees){
+		Point position = worldState.getVehicleState().getPosition();
+		Vector3D orientationVector = worldState.getVehicleState().getOrientation();
+		Vector3D positionOffset = new Vector3D(p.getX() - position.x, p.getY() - position.y, 0);
+		double angle = Math.atan2(positionOffset.getX(), positionOffset.getY());
+		angle -= Math.toRadians(orientationVector.getZ());
+		angle -= Math.toRadians(worldState.getVehicleState().getHeadingCalibration());
+		//Convert angle to range [-180, 180]
+		while(angle < -Math.PI){ angle+=(2*Math.PI); }
+		while(angle > Math.PI){ angle-=(2*Math.PI); }
+		//If call was specified as degrees, convert units
+		angle = (isDegrees)?Math.toDegrees(angle):angle;
+		return angle;
+	}
+	
+	/**************************************************************************************************************
+	 * Search cells around specified zoneCell for any obstructed cells. If any cells are obstructed, returns false
+	 * otherwise returns true.
+	 **************************************************************************************************************/
+	public boolean isZoneCellObstructed(Point zoneCellIdx, int searchRadius){
+		List<Point> adjacentZoneCellIdxList = findAdjacentZoneCellIndexes(zoneCellIdx, searchRadius, true);
+		boolean isObstructed = false;
+		for(Point p: adjacentZoneCellIdxList){
+			ZoneCell zc = worldState.getZoneCellMap().get(p);
+			if(zc != null && zc.isObstruction()){
+				isObstructed = true;
+			}
+			if(zc != null && zc.getSnowVolume() > 0){
+				isObstructed = true;
+			}
+		}
+		return isObstructed;
+	}
+	
+	/**************************************************************************************************************
+	 * Returns a list of the indices for all zone cells adjacent to the current cell
+	 **************************************************************************************************************/
+	public List<Point> findAdjacentZoneCellIndexes(Point zoneCellCoordinate, int searchRadius, boolean isIncludeCenterPoint){
+		List<Point> pList = new ArrayList<Point>();
+		int minXSearchRadius = zoneCellCoordinate.x - searchRadius;
+		int maxXSearchRadius = zoneCellCoordinate.x + searchRadius;
+		int minYSearchRadius = zoneCellCoordinate.y - searchRadius;
+		int maxYSearchRadius = zoneCellCoordinate.y + searchRadius;
+		for(int x = minXSearchRadius; x <= maxXSearchRadius; x++){
+			for(int y = minYSearchRadius; y <= maxYSearchRadius; y++){
+				Point p = new Point();
+				p.setLocation(x, y);
+				if(!isIncludeCenterPoint || p != zoneCellCoordinate){
+					pList.add(p);
+				}
+			}
+		}
+		return pList;
+	}
+	
+	/**************************************************************************************************************
+	 * Convert position on the grid to zoneCellIdx
+	 **************************************************************************************************************/
+	public Point positionToZoneCellIdx(Point p){
+		return new Point((int)p.getX()/100,(int) p.getY()/100);
+	}
+	
+	public Point zoneCellIdxToPosition(Point p){
+		return new Point((int)p.getX()*100,(int) p.getY()*100);
+	}
+	
+	
+	/**************************************************************************************************************
+	 * Implementation of A* pathfinding algorithm
+	 * Returns list of waypoint coordinates (not indexes) between start and finish
+	 **************************************************************************************************************/
+	public List<Point> findPath(Point start, Point finish, int searchRadius, boolean isAllowedTraverseSnow) {
+		Point startIdx = positionToZoneCellIdx(start);
+		Point finishIdx = positionToZoneCellIdx(finish);
+		Set<Point> openSet = new HashSet<Point>();
+		Set<Point> closedSet = new HashSet<Point>();
+		Map<Point, Point> reverseTraversalMap = new HashMap<>(); //key: destination, value: source
+		boolean done = false;
+		Point current = startIdx;
+		openSet.addAll(findAdjacentZoneCellIndexes(current, 1, false)); // add starting node to open list
+		
+		while(!done){
+			current = findClosestToDestination(openSet, finishIdx); // get node with lowest fCosts from openSet
+			closedSet.add(current); // add current node to closed list
+			openSet.remove(current); // delete current node from open list
+			
+			if (current.equals(finishIdx)) { // found goal
+				List<Point> pathIndexList = new ArrayList<>();
+				List<Point> pathCoordinateList = new ArrayList<>(); //List of coordinates
+				Point rt = finishIdx;
+				pathIndexList.add(finishIdx);
+				while(rt != startIdx){
+					rt = reverseTraversalMap.get(rt);
+					if(rt != null){
+						//pathCoordinateList.add(zoneCellIdxToPosition(rt));
+						pathIndexList.add(rt);
+					}else{
+						break;
+					}
+				}
+				Collections.reverse(pathIndexList);
+				//Optimize the route
+				pathIndexList = optimizeNavigationRoute(pathIndexList, searchRadius);
+				//Convert indices to coordinates
+				for(Point p: pathIndexList){
+					pathCoordinateList.add(zoneCellIdxToPosition(p));
+				}
+				return pathCoordinateList;
+
+			}
+			
+			//Do not traverse to node if obstructed, or if in closed set
+			boolean isNotObstructed = !isZoneCellObstructed(current, searchRadius);
+			if(isNotObstructed){
+				// for all adjacent nodes:
+				List<Point> adjacentNodes = findAdjacentZoneCellIndexes(current, 1, false);
+				adjacentNodes.removeAll(closedSet);
+				//Iterate over all adjacent nodes and add them to the reverse traversal map
+				for (Point currentAdj: adjacentNodes) {
+					if (!openSet.contains(currentAdj)) { // node is not in openSet
+						reverseTraversalMap.put(currentAdj, current);
+						openSet.add(currentAdj); // add node to openSet
+					}
+				}
+				if (openSet.isEmpty()) { // no path exists
+					return new ArrayList<Point>(); // return empty list
+				}
+			}
+		} //!done
+		return null; // unreachable
+	}
+	
+	/***************************************************************************************
+	 * Returns the point from pList that is closest to destination measured in 10cm units
+	 ***************************************************************************************/
+	public Point findClosestToDestination(Set<Point> pList, Point destination){
+		double minDistance = 999999;
+		Point closest = null;
+		for(Point p: pList){
+			double distance = p.distance(destination);
+			ZoneCell zc = worldState.getZoneCellMap().get(p);
+			
+			//Apply a distance-based penalty to traversing snow-zones
+			if(zc != null){
+				distance = distance + ((distance * zc.getSnowVolume()) - 1)/5;
+				System.out.println("Calculated distance: " + distance);
+			}
+			if(distance < minDistance){
+				minDistance = distance;
+				closest = p;
+			}
+		}
+		
+		if(closest == null){
+			System.out.println("Couldn't find a route?? minDistance: " + minDistance);
+		}
+		
+		return closest;
+	}
+	
+	/********************************************************************************
+	 * Returns a navigation waypoint list pruned of unnecessary intermediate 
+	 * waypoints
+	 ********************************************************************************/
+	public List<Point> optimizeNavigationRoute(List<Point> waypointIdxList, int searchRadius){
+		List<Point> prunedWaypointList = new ArrayList<Point>();
+		Point source = waypointIdxList.get(0);
+		Point destination = waypointIdxList.get(waypointIdxList.size()-1);
+		if(isDirectPathObstructed(source, destination, searchRadius)){
+			
+			//Divide waypoints into two lists, both lists share the midpoint between them
+			int midpoint = waypointIdxList.size()/2;
+			List<Point> firstHalf = new ArrayList<>();
+			List<Point> secondHalf = new ArrayList<>();
+			for(int i=0; i< waypointIdxList.size();i++){
+				if(i <= midpoint){
+					firstHalf.add(waypointIdxList.get(i));
+				}
+				if(i >= midpoint){
+					secondHalf.add(waypointIdxList.get(i));
+				}
+			}
+			//Recursively call each half of the waypoint lists
+			List<Point> firstHalfOptimized = optimizeNavigationRoute(firstHalf, searchRadius);
+			prunedWaypointList.addAll(firstHalfOptimized);
+			List<Point> secondHalfOptimized = optimizeNavigationRoute(secondHalf, searchRadius);
+			secondHalfOptimized.remove(0); //Remove the repeated midpoint
+			prunedWaypointList.addAll(secondHalfOptimized);
+		}else{
+			//Direct path between source and destination
+			prunedWaypointList.add(source);
+			prunedWaypointList.add(destination);
+		}
+		return prunedWaypointList;
+	}
+	
+	/********************************************************************************
+	 * Evaluates all zoneCells directly between source and destination. Returns true 
+	 * if any cell is obstructed, otherwise returns false
+	 ********************************************************************************/
+	public boolean isDirectPathObstructed(Point source, Point destination, int searchRadius){
+		List<Point> linePathList = getLineBetweenPoints(source, destination);
+		for(Point p: linePathList){
+			if(isZoneCellObstructed(p, searchRadius)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/********************************************************************************
+	 * Implementation of Bresenham's algorithm to find all cells between two points
+	 ********************************************************************************/
+	public List<Point> getLineBetweenPoints(Point source, Point destination){
+		List<Point> line = new ArrayList<Point>();
+		Point current = new Point(source);
+		int w = (int) (destination.getX() - source.getX());
+	    int h = (int) (destination.getY() - source.getY());
+	    int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0 ;
+	    if (w<0) dx1 = -1 ; else if (w>0) dx1 = 1 ;
+	    if (h<0) dy1 = -1 ; else if (h>0) dy1 = 1 ;
+	    if (w<0) dx2 = -1 ; else if (w>0) dx2 = 1 ;
+	    int longest = Math.abs(w) ;
+	    int shortest = Math.abs(h) ;
+	    if (!(longest>shortest)) {
+	        longest = Math.abs(h) ;
+	        shortest = Math.abs(w) ;
+	        if (h<0) dy2 = -1 ; else if (h>0) dy2 = 1 ;
+	        dx2 = 0 ;            
+	    }
+	    int numerator = longest >> 1 ;
+	    for (int i=0;i<=longest;i++) {
+	    	Point nextPosition = new Point(current);
+	    	line.add(nextPosition);
+	        numerator += shortest ;
+	        if (!(numerator<longest)) {
+	            numerator -= longest ;
+	            current.x += dx1 ;
+	            current.y += dy1 ;
+	        } else {
+	        	current.x += dx2 ;
+	        	current.y += dy2 ;
+	        }
+	    }
+	    return line;
+	}
+}

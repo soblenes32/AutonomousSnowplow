@@ -1,0 +1,47 @@
+package com.asl.snowplow.service;
+
+import java.awt.Point;
+
+import javax.inject.Inject;
+
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.springframework.stereotype.Service;
+
+import com.asl.snowplow.model.WorldState;
+
+@Service
+public class VehicleInstructionService {
+	
+	@Inject
+	WorldState worldState;
+	
+	public void moveDirectlyToCoordinate(Point p){
+		Point position = worldState.getVehicleState().getPosition();
+		double distance = p.distance(position);
+		
+		//Angle is < 15 degrees
+		
+	}
+	
+	/************************************************************************************************************
+	 * Calculates the magnitude of rotation required for vehicle to face the specified point
+	 ************************************************************************************************************/
+	public double calculateRotationToCoordinates(Point p){
+		return calculateRotationToCoordinates(p, false);
+	}
+	public double calculateRotationToCoordinates(Point p, boolean isDegrees){
+		Point position = worldState.getVehicleState().getPosition();
+		Vector3D orientationVector = worldState.getVehicleState().getOrientation();
+		Vector3D positionOffset = new Vector3D(p.x - position.x, p.y - position.y, 0);
+		double angle = Math.atan2(orientationVector.getY(),orientationVector.getX()) - Math.atan2(positionOffset.getY(),positionOffset.getX());
+		//Ensure that angle is +/- 2PI
+		angle = angle % (2 * Math.PI);
+		//Confine angle between [-180, 180]
+		//If angle is less than -180 degrees, add 180 degrees and flip the sign
+		//angle = (angle < -1 * Math.PI)?((angle + Math.PI) * -1):angle;
+		angle = (angle > Math.PI)?((angle - Math.PI) * -1):angle;
+		//If call was specified as degrees, convert units
+		angle = (isDegrees)?Math.toDegrees(angle):angle;
+		return angle;
+	}
+}

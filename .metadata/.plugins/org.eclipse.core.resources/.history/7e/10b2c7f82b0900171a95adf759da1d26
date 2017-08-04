@@ -1,0 +1,92 @@
+package com.asl.botdash.botml;
+
+import javax.inject.Inject;
+
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import com.asl.botdash.command.MotionCommand;
+
+@Service
+public class QLearnTrainingService{
+	@Inject
+	QLearnASExplorerService qLearnASExplorerService;
+	@Inject
+	PresetMotionService presetMotionService;
+
+	//If true, then the robot is training
+	private boolean isTraining = false;
+	//If non-null, then robot is in the process of running a preset
+	private String presetName = null;
+	//If true, then robot is in the process of calibrating the gyroscope
+	private int calibrationCountdownStep = 0;
+	private static final int calibrationSteps = 5;
+	//The index of the current step in executing a preset motion
+	private int presetSequenceIdx = 0;
+	private int presetSequenceLength = -1;
+
+
+	private int stepsSinceCalibration = 0;
+	private static final int stepsBetweenCalibration = 15;
+
+	//The current training command
+	private MotionCommand command;
+
+	public void startTraining(MotionCommand command){
+		if(this.command != command && isTraining){
+			qLearnASExplorerService.writeObservationsToFile(this.command.getFileName());
+			qLearnASExplorerService.clearObservations();
+			qLearnASExplorerService.readObservationsFromFile(command.getFileName());
+		}
+		this.command = command;
+		isTraining = true;
+	}
+
+	public void stopTraining(){
+		isTraining = false;
+		qLearnASExplorerService.writeObservationsToFile(this.command.getFileName());
+	}
+
+	@Scheduled(fixedDelay=1500)
+	public void step(){
+		//Short circuit if training is not enabled
+		if(!isTraining) return;
+
+		//Have I flipped over?
+		if(qLearnASExplorerService.isUpsideDown()){ //Crap...
+			presetName = "selfRighting";
+		}else if(stepsSinceCalibration >= stepsBetweenCalibration){
+			//Do I need to calibrate the gyroscope?
+			presetName = "calibrating";
+			calibrationCountdownStep = calibrationSteps;
+		}
+		System.out.println("presetName: " + presetName);
+
+//		if(presetName != null){
+//			runPreset();
+//		}else if(calibrationCountdownStep > 0){
+//			if(calibrationCountdownStep == calibrationSteps){
+//				//TODO: execute calibration routine
+//			}
+//			calibrationCountdownStep--;
+//		}else{
+//			//Save observation data
+//			qLearnASExplorerService.recordObservation();
+//			//Execute the next experiment
+//			qLearnASExplorerService.executeNextPosition();
+//		}
+	}
+
+	private void runPreset(){
+		if(presetSequenceLength < 0){
+			presetSequenceLength = presetMotionService.getSequenceLength(presetName);
+		}
+		presetMotionService.executeSequencePosition(presetName, presetSequenceIdx);
+		presetSequenceIdx++;
+		if(presetSequenceIdx == presetSequenceLength){
+			presetName = null;
+			presetSequenceIdx = 0;
+			presetSequenceLength = -1;
+		}
+	}
+}

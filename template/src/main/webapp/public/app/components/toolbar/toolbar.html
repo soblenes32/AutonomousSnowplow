@@ -1,0 +1,38 @@
+<div ng-controller="ToolbarCtrl">
+	<!-- Center-aligned toolbar content -->
+	<md-toolbar layout="row" flex layout-align="center center">
+		<div class="md-toolbar-tools">
+			<!-- Hamburger menu button for mobile -->
+			<md-button class="md-icon-button md-fab md-mini" ng-if="!mdMedia('gt-sm')" aria-label="Menu" ng-click="toggleNav()">
+				<i class="material-icons">menu</i>
+			</md-button>
+			<!-- Logo image -->
+			<img src="images/HP_OneLine_color_logo.png" style="max-height:40px">
+			
+			<!-- Fill up the middle -->
+			<span flex></span>
+			
+			<!-- Right-aligned toolbar content -->
+			<md-menu>
+				<md-button aria-label="Open phone interactions menu" class="md-icon-button md-fab md-mini" ng-click="openMenu($mdOpenMenu, $event);" layout="row" layout-align="center center">
+					<i ng-if="!modelService.avatarUrl()" class="material-icons">person</i>
+					<div ng-if="modelService.avatarUrl()" class="profile-image image-tiny image-round">
+						<img ng-src="{{modelService.avatarUrl()}}">
+					</div>
+				</md-button>
+				<md-menu-content width="4">
+					<md-menu-item>
+						<md-button class="fix-icon" ng-click="signout()">
+							<i class="material-icons">exit_to_app</i>
+							Logout
+						</md-button>
+					</md-menu-item>
+				</md-menu-content>
+			</md-menu>
+			
+		</div>
+
+		
+		
+	</md-toolbar>
+</div>

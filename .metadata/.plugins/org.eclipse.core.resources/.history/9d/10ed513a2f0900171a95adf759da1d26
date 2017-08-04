@@ -1,0 +1,56 @@
+package com.asl.botdash.botml;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class PresetMotionService{
+	private Map<String, List<Float[]>> presetMotionMap = null;
+
+	public void init(){
+		presetMotionMap =  Collections.synchronizedMap(new HashMap<>());
+		List<Float[]> selfRighting = new ArrayList<>();
+		Float[] selfRightingPos1Arr = {0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
+		Float[] selfRightingPos2Arr = {0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
+		Float[] selfRightingPos3Arr = {0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
+		selfRighting.add(selfRightingPos1Arr);
+		selfRighting.add(selfRightingPos2Arr);
+		selfRighting.add(selfRightingPos3Arr);
+		presetMotionMap.put("selfRighting", selfRighting);
+
+		List<Float[]> calibrating = new ArrayList<>();
+		Float[] calibratingPos1Arr = {0.5f,0.5f,0.5f,0.5f,0.5f,0.5f,0.5f,0.5f,0.5f,0.5f,0.5f,0.5f};
+		selfRighting.add(calibratingPos1Arr);
+		presetMotionMap.put("calibrating", calibrating);
+	}
+
+	public void executeSequencePosition(String sequenceName, int stepIdx){
+		if(presetMotionMap == null){
+			init();
+		}
+		if(presetMotionMap.containsKey(sequenceName)){
+			List<Float[]> pList = presetMotionMap.get(sequenceName);
+			if(pList.size() > stepIdx){
+				Float[] position = pList.get(stepIdx);
+			}else{
+				System.out.println("Preset motion has " + pList.size() + " positions. Unable to locate: " + stepIdx);
+			}
+		}
+		//TODO: execute position
+	}
+
+	public int getSequenceLength(String sequenceName){
+		if(presetMotionMap == null){
+			init();
+		}
+		if(presetMotionMap.containsKey(sequenceName)){
+			return presetMotionMap.get(sequenceName).size();
+		}
+		return 0;
+	}
+}

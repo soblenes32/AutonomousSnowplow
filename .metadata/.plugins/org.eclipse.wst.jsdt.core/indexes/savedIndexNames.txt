@@ -1,0 +1,1 @@
+INDEX VERSION 1.4+E:\Dev\workspaces\snowplow\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes

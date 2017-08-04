@@ -1,0 +1,374 @@
+angular.module("SnowplowApp")
+.directive("snowplowPlotD3", ['$filter', function($filter){
+	return {
+		restrict : 'E',
+        transclude: 'true',
+        scope: {
+			anchorArr: '=', //Array of anchor object in form [{"name":"0xA123", point:{"x":0.0, "y":0.0}}, ... ]
+			vehicleState: '=', //The current position of the vehicle
+			localVehicleState: '=', //Local form modifications to the vehicle state
+			vehiclePositionArr: '=', //Array of vehicle position and orientation data in form [{"x":0.0, "y":0.0}, ... ]
+			lidarDetectionArr: '=', //Array of detection points from the lidar
+			vehicleCommandQueue: '=', //Array of current vehicle commands
+			zoneCellDataModelService: '=', //Array of objects indicating terrain features
+			activity: "=", //Defines how the user interacts with the plot. Supported values: [waypoint, stop, plowzone, plowedsnowzone, parkzone, addobstruction, removeobstruction, moveanchors]
+			transactionInitiate:"=" //Callback function to issue vehicle commands to the server
+		},
+		link: function(scope,element,attr){
+			/*************************************************************************
+			 **************************** Static values ******************************
+			 *************************************************************************/
+			var marginmm = 1000; //The margin between each anchor and the edge of the plot in millimeters
+			var x = null;
+			var y = null;
+
+			/*************************************************************************
+			 ************************** Redraw the chart *****************************
+			 *************************************************************************/
+			scope.$watchGroup([
+				'anchorArr',
+				function() { return element[0].parentElement.clientWidth; },
+				function() { return element[0].parentElement.clientHeight; }
+			], function(newValues, oldValues, scope) {
+				//Short-circuit if anchor data is not yet available
+				if(!scope.anchorArr || scope.anchorArr.length == 0) return;
+
+				//Get some statistics about the min and max values to help us define the domain and margins
+				var anchorXArr = scope.anchorArr.map(function(p) {return p.position.x;});
+				var anchorYArr = scope.anchorArr.map(function(p) {return p.position.y;});
+				
+				var maxXVal = d3.max(anchorXArr) + 1000;
+				var minXVal = d3.min(anchorXArr) - 1000;
+				var maxYVal = d3.max(anchorYArr) + 1000;
+			    var minYVal = d3.min(anchorYArr) - 1000;
+
+				//Set the dimensions of the canvas / graph
+			    var margin = {top: 10, right: 10, bottom: 50, left: 50};
+
+				//Set fetch the available width and height of the root element
+			    var outerWidth = element[0].parentElement.clientWidth - 10;
+			    var outerHeight = element[0].parentElement.clientHeight - 10;
+				var width = outerWidth - margin.left - margin.right;
+				var height = outerHeight - margin.top - margin.bottom;
+				
+				//Short circuit if enclosing container is not rendered
+				if(width < 0 || height < 0) return;
+
+				//Need to adjust the domain aspect ratio to fit the element aspect ratio so that they're not skewed
+				var elementAspectRatio = width/height;
+				var domainAspectRatio = (maxXVal-minXVal)/(maxYVal-minYVal);
+				var isNeedScaleDomainMargin = (elementAspectRatio > domainAspectRatio);
+				
+				//console.log("Element aspect ratio: " + elementAspectRatio + ", domain aspect ratio: " + domainAspectRatio + ", need to scale domain margin? " + isNeedScaleDomainMargin);
+				
+				if(isNeedScaleDomainMargin){
+					var elementToDomainConversionUnits = (maxYVal-minYVal) / height;
+					var horizontalMargin = ((width * elementToDomainConversionUnits) - (maxXVal - minXVal)) / 2;
+					minXVal = minXVal - horizontalMargin;
+					maxXVal = maxXVal + horizontalMargin;
+					//console.log("Adding horizontal margins: " + horizontalMargin);
+				}else{
+					var elementToDomainConversionUnits = (maxXVal-minXVal) / width;
+					var verticalMargin = ((height * elementToDomainConversionUnits) - (maxYVal - minYVal)) / 2;
+					minYVal = minYVal - verticalMargin;
+					maxYVal = maxYVal + verticalMargin;
+					//console.log("Adding vertical margins: " + verticalMargin);
+				}
+				
+				//domainAspectRatio = (maxXVal-minXVal)/(maxYVal-minYVal);
+				//console.log("New domain aspect ratio: " + domainAspectRatio);
+
+				// Set the ranges
+				x = d3.scaleLinear().range([0, width]);
+				y = d3.scaleLinear().range([height, 0]);
+
+				//Define the axes domain
+				x.domain([minXVal, maxXVal]);
+				y.domain([minYVal, maxYVal]);
+				
+				var xTickCount = Math.floor((maxXVal - minXVal) / 1000);
+				var yTickCount = Math.floor((maxYVal - minYVal) / 1000);
+				
+				//console.log("xTickCount: Math.floor((" + maxXVal + " - " + minXVal + ") / 1000)");
+				//console.log("xTickCount: " + xTickCount);
+				//console.log("yTickCount: Math.floor((" + maxYVal + " - " + minYVal + ") / 1000)");
+				//console.log("yTickCount: " + yTickCount);
+			    
+			    // gridlines in x axis function
+			    function make_x_gridlines() { return d3.axisBottom(x).ticks(xTickCount)}
+			    function make_y_gridlines() { return d3.axisLeft(y).ticks(yTickCount)}
+				
+				//Remove old plot
+				d3.select(element[0]).selectAll("*").remove();
+				// Add the container canvas
+				var svg = d3.select(element[0])
+				    .append("svg")
+				        .attr("width", outerWidth)
+				        .attr("height", outerHeight);
+				var container = svg.append("g") //Create a group for all the contents to apply the margins to
+				 	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+				
+				//Add gridlines
+				container.append("g")
+					.attr("class", "grid")
+					.attr("transform", "translate(0," + height + ")")
+					.call(make_x_gridlines().tickSize(-height).tickFormat(""));
+				container.append("g")			
+					.attr("class", "grid")
+					.call(make_y_gridlines().tickSize(-width).tickFormat(""));
+				
+				//Add axis
+			    container.append("g")
+			    	.attr("class", "xAxis")
+			    	.attr("transform", "translate(0," + height + ")")
+			    	.call(d3.axisBottom(x).ticks(5));
+			    
+				container.append("g")
+					.attr("class", "yAxis")
+					.call(d3.axisLeft(y).ticks(5));
+				
+
+			    //Label X Axis (outside)
+			    //container.append("text")
+				//    .attr("class", "xlabel")
+				//    .attr("text-anchor", "middle")
+				//    .attr("x", width/2)
+				//    .attr("y", height + margin.bottom - 6)
+				//    .text("Years from policy start");
+				//var topOffset = yAxisText.length * 7;
+				//container.append("text")
+				//	.attr("class", "ylabel")
+				//	.attr("y", -margin.left + 15)
+				//	.attr("x", -(height/2))
+				//	.attr("transform", "rotate(-90)")
+				//	.style("text-anchor", "middle")
+				//	.text(yAxisText);
+				
+				
+				/*************************************************************************
+				 ************************** Click event handler ***************************
+				 *************************************************************************/
+				var mouseInterceptor = container.append("rect")
+					.attr("width", width)
+					.attr("height", height)
+					.attr("fill-opacity", 0.0);
+				
+				var dragStartCoords = {};
+				//Move element to the "front" of the svg so it will handle click event
+				mouseInterceptor.on("click", function() {
+					var coords = d3.mouse(this);
+					//Fetch x,y zoneCell grid coordinate value from mouse click
+					var xCoord = Math.round(x.invert(coords[0]));
+					var yCoord = Math.round(y.invert(coords[1]));
+					//Fetch the zoneCell object if it exists, or initialize if not
+					var zoneCellObj = scope.zoneCellDataModelService.getZoneCellFromCoords(xCoord,yCoord);
+					if(!zoneCellObj){
+						var zoneCellIdxObj = scope.zoneCellDataModelService.coordsToCellIdx(xCoord, yCoord);
+						zoneCellObj = scope.zoneCellDataModelService.initZoneCellObj(zoneCellIdxObj); //({x:xCoord, y:yCoord});
+					}
+					
+					if(scope.activity == 'waypoint'){
+						scope.transactionInitiate([xCoord,yCoord]);
+					}else if(scope.activity == 'addobstruction'){
+						zoneCellObj.obstruction = (zoneCellObj.obstruction)?false:true;
+						//console.dir(zoneCellObj);
+						scope.transactionInitiate([zoneCellObj]);
+					}else{
+						//Actions that apply to the entire selected square meter
+						var zciarr = scope.zoneCellDataModelService.getM2ZoneCellIdxArrFromCoords(xCoord,yCoord);
+						var zcoarr = [];
+						if(scope.activity == 'plowzone'){ //Block entire square meter
+							isPlowZone = (zoneCellObj.plowZone)?false:true; //Toggle
+							zcoarr = scope.zoneCellDataModelService.setZoneCellProp(zciarr, "plowZone", isPlowZone, true);
+							zcoarr = scope.zoneCellDataModelService.setZoneCellProp(zciarr, "snowVolume", 1);
+						}else if(scope.activity == 'plowedsnowzone'){
+							isPlowedSnowZone = (zoneCellObj.plowedSnowZone)?false:true; //Toggle
+							zcoarr = scope.zoneCellDataModelService.setZoneCellProp(zciarr, "plowedSnowZone", isPlowedSnowZone, true);
+						}else if(scope.activity == 'parkingzone'){
+							isParkZone = (zoneCellObj.parkZone)?false:true; //Toggle
+							zcoarr = scope.zoneCellDataModelService.setZoneCellProp(zciarr, "parkZone", isParkZone, true);
+						}
+						scope.transactionInitiate(zcoarr);
+					}
+						
+					
+				});
+				
+
+				/*************************************************************************
+				 ************************** Mark the anchors *****************************
+				 *************************************************************************/
+				var notationGroup = container.append("g")
+					.attr("class", "notation-group");
+				
+				scope.anchorArr.forEach(function(anchorObj){
+					var anchorGroup = notationGroup.append("g")
+						.attr("class", "anchor-group")
+						.attr("transform", "translate(" + x(anchorObj.position.x) + "," + y(anchorObj.position.y) + ")")
+						.datum(anchorObj);
+					anchorGroup.append("rect")
+						.attr("x", -4)
+						.attr("y", -4)
+						.attr("width", 8)
+						.attr("height", 8);
+					anchorGroup.append("text")
+						.attr("x", "0")
+						.attr("y", "14")
+						.text(anchorObj.name);
+				});
+				
+				//Anchor drag event handlers
+				d3.selectAll(".anchor-group").call(d3.drag()
+					.on("start", function(d){
+						if(scope.activity == 'moveanchors'){
+							d3.select(this).classed("dragged", true);
+						}
+					}).on("drag", function(d){
+						if(scope.activity == 'moveanchors'){
+							d3.select(this).attr("transform", "translate(" + d3.event.x + "," + d3.event.y + ")");
+						}
+					}).on("end", function(d){
+						if(scope.activity == 'moveanchors'){
+							d3.select(this).classed("dragged", false);
+							var anchorObj = d3.select(this).datum();
+							anchorObj.position.x = x.invert(d3.event.x);
+							anchorObj.position.y = y.invert(d3.event.y);
+							scope.transactionInitiate();
+						}
+					}));
+				
+				//Draw the zoneCells
+				renderZoneCells();
+				
+			}); //$watchGroup
+
+
+			/******************************************************************************
+			 *************************** Render vehicle indicator *************************
+			 ******************************************************************************/
+
+			scope.$watchGroup(['vehiclePositionArr','vehicleState','localVehicleState'], function(newValues, oldValues, scope) {
+				//Short-circuit if anchor or vehicle data is not yet available
+				if(!scope.anchorArr || !scope.vehiclePositionArr || scope.vehiclePositionArr.length == 0 || !x || !y) return;
+
+				var container = d3.select(element[0]).select("svg").select("g");
+
+				//Clean up old path and position indicator
+				var vehicleGroup = d3.select(element[0]).selectAll(".vehicle-indicator");
+
+				if(vehicleGroup.empty()){
+					vehicleGroup = container.append("g")
+						.attr("class","vehicle-indicator")
+							.append("polygon")
+						.style("stroke", "black")
+						.style("fill", "black")
+						.attr("points", "10,0, 0,30, 20,30");
+				}
+				vehicleGroup
+					.attr("transform", "translate(" + (x(scope.vehicleState.position.x)-10) + "," + (y(scope.vehicleState.position.y)-15) + ")")
+						.select("polygon")
+						.attr("transform", "rotate(" + (scope.vehicleState.orientation.z + scope.localVehicleState.headingCalibration) + ", 10, 15)");
+				
+				//Render the waypoint path if the vehicleCommandQueue is initialized
+				if(scope.vehicleCommandQueue){
+					//MOVE_TO
+					var waypointVehicleCommandArr = scope.vehicleCommandQueue.filter(function(command){
+						return command.vehicleCommandType == 'MOVE_TO' || command.vehicleCommandType == 'NAV_TO';
+					});
+					//Add the vehicle current location to the head of the array for rendering
+					waypointVehicleCommandArr.unshift({args:[scope.vehicleState.position.x, scope.vehicleState.position.y]});
+					
+					var waypointLineFunction = d3.line()
+						.x(function(d) { return x(d.args[0]); })
+						.y(function(d) { return y(d.args[1]); });
+					
+					var waypointPath = d3.select(element[0]).selectAll(".waypoint-path");
+					if(waypointPath.empty()){
+						waypointPath = container.append("path")
+							.attr("class","waypoint-path")
+							.attr("stroke", "blue")
+							.attr("stroke-width", 2)
+							.attr("fill", "none");
+					}
+					waypointPath.attr("d", waypointLineFunction(waypointVehicleCommandArr));
+				}
+				
+			}); //$watchGroup
+			
+			
+			/******************************************************************************
+			 *************************** Render lidar detection points*********************
+			 ******************************************************************************/
+
+			scope.$watchGroup(['lidarDetectionArr'], function(newValues, oldValues, scope) {
+				//Short-circuit if anchor or vehicle data is not yet available
+				if(!scope.lidarDetectionArr || !x || !y) return;
+console.dir(scope.lidarDetectionArr);
+				//Clean up old path and position indicator
+				var lidarPoints = d3.select(element[0]).selectAll(".lidar-point")
+			      .data(scope.lidarDetectionArr)
+			      .enter()
+			    .append('circle')
+			      .classed(".lidar-point", true)
+			      .attr('cx',function (d) { return x(d.x); })
+			      .attr('cy',function (d) { return y(d.y); })
+			      .attr('r','3')
+			      .attr('stroke','red')
+			      .attr('stroke-width',1)
+			      .attr('fill','red');
+
+				
+			}); //$watchGroup
+			
+			
+			
+			
+			/*************************************************************************
+			 ************************** ZoneCell markers *****************************
+			 *************************************************************************/
+			
+			/***********************************************************************************************************************
+			 * activity
+			 * [waypoint, stop, plowzone, plowedsnowzone, parkzone, addobstruction, removeobstruction, moveanchors]
+			 ***********************************************************************************************************************/
+			scope.$watch('zoneCellDataModelService', function(newValue, oldValue, scope) {
+				//Short-circuit if anchor or vehicle data is not yet available
+				if(!scope.anchorArr || !scope.vehiclePositionArr || !scope.activity || scope.vehiclePositionArr.length == 0 || !scope.zoneCellDataModelService.zoneCellArr || !x || !y) return;
+
+				renderZoneCells();
+				//container.selectAll(".zone-cell-rect").exit().remove();
+				
+			}, true); //$watchGroup
+			
+			function renderZoneCells(){
+				var container = d3.select(element[0]).select("svg").select("g");
+				
+				var zoneCellRects = container.selectAll(".zone-cell-rect")
+					.remove().exit().data(scope.zoneCellDataModelService.zoneCellArr);
+				
+				zoneCellRects.enter()
+		                .append("rect")
+		                .attr("x", function(d){return x(d.coordinates.x * 100);})
+						.attr("y", function(d){return y((d.coordinates.y + 1) * 100);})
+						.attr("width", x(100) - x(0))
+						.attr("height", y(0) - y(100))
+						.classed("zone-cell-rect", true)
+						.classed("obstruction-zone", function(d){return d.obstruction;})
+						.classed("plowed-snow-zone", function(d){return d.plowedSnowZone;})
+						.classed("parking-zone", function(d){return d.parkZone;})
+						
+						.classed("plow-zone-0", function(d){return d.plowZone && d.snowVolume == 0;})
+						.classed("plow-zone-1", function(d){return d.plowZone && d.snowVolume > 0 && d.snowVolume <= 1;})
+						.classed("plow-zone-3", function(d){return d.plowZone && d.snowVolume > 1 && d.snowVolume <= 3;})
+						.classed("plow-zone-5", function(d){return d.plowZone && d.snowVolume > 3 && d.snowVolume <= 5;})
+						.classed("plow-zone-7", function(d){return d.plowZone && d.snowVolume > 5 && d.snowVolume <= 7;})
+						.classed("plow-zone-9", function(d){return d.plowZone && d.snowVolume > 7;})
+						
+						.classed("transparent", function(d){return !d.obstruction && !d.plowedSnowZone && !d.parkZone && !d.plowZone;})
+					
+			} //renderZoneCells
+			
+		}, //link
+		template: "<div id='chart'></div>"
+	}; //return
+}]);

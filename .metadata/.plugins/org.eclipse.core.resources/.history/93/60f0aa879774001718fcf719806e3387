@@ -1,0 +1,127 @@
+<div layout="column" layout-align="start" class="background-graduate" ng-cloak flex>
+	<div style="float:right; position:absolute;">
+		<md-button class="md-fab md-primary" aria-label="open grid markers" ng-click="toggleSideNav()">
+			<md-icon class="material-icons" >menu</md-icon>
+        </md-button>
+	</div>
+
+	<div layout="row" layout-align="start" flex>
+		<snowplow-plot-d3 
+			anchor-arr="tdms.anchorArr"
+			vehicle-state="tdms.vehicleState"
+			local-vehicle-state="form"
+			vehicle-position-arr="tdms.vehicleStateArr"
+			lidar-detection-arr="tdms.lidarDetectionArr"
+			zone-cell-data-model-service="zcdms"
+			vehicle-command-queue="vcdms.commandArr"
+			activity="activity"
+			transaction-initiate="uploadTransaction"></snowplow-plot-d3>
+	</div>
+	
+
+	
+	<md-sidenav class="md-sidenav-right" md-component-id="grid-right" md-whiteframe="1">
+		<md-toolbar>
+			<h1 class="md-toolbar-tools">Grid markers</h1>
+		</md-toolbar>
+		<md-list>
+			<md-subheader class="md-no-sticky">Actions</md-subheader>
+			<md-list-item ng-click="stopVehicle()">
+				<md-icon class="material-icons">stop</md-icon>
+				<p>Stop now</p>
+			</md-list-item>
+			
+			<md-divider></md-divider>
+			
+			<md-list-item ng-class="{'active':activity=='waypoint'}" ng-click="activity='waypoint';">
+				<md-icon class="material-icons">my_location</md-icon>
+				<p>Add waypoint</p>
+			</md-list-item>
+			
+			<md-divider></md-divider>
+			
+			
+			<md-subheader class="md-no-sticky">
+				Define Zones
+			</md-subheader>
+			
+			<md-list-item ng-class="{'active':activity=='plowzone'}" ng-click="activity='plowzone';">
+				<md-icon class="material-icons">texture</md-icon>
+				<p>Plow zone</p>
+				<md-button class="md-icon-button md-primary md-secondary md-raised" aria-label="Settings" ng-click="launchZoneCellPresetDialog($event)">
+					<md-icon class="material-icons">input</md-icon>
+				</md-button>
+			</md-list-item>
+			
+			<md-divider></md-divider>
+			
+			<md-list-item ng-class="{'active':activity=='plowedsnowzone'}" ng-click="activity='plowedsnowzone';">
+				<md-icon class="material-icons">ac_unit</md-icon>
+				<p>Plowed-snow zone</p>
+			</md-list-item>
+			
+			<md-divider></md-divider>
+			
+			<md-list-item ng-class="{'active':activity=='parkingzone'}" ng-click="activity='parkingzone';">
+				<md-icon class="material-icons">local_parking</md-icon>
+				<p>Park zone</p>
+			</md-list-item>
+			
+			<md-divider></md-divider>
+			
+			<md-list-item class="md-primary" ng-click="clearAllZones()">
+				<md-icon class="material-icons" >do_not_disturb</md-icon>
+				<p>Clear all zones</p>
+			</md-list-item>
+			
+			<md-divider></md-divider>
+			
+			<md-subheader class="md-no-sticky">Obstructions</md-subheader>
+			
+			<md-list-item ng-class="{'active':activity=='addobstruction'}" ng-click="activity='addobstruction';">
+				<md-icon class="material-icons">grid_on</md-icon>
+				<p>Add obstruction</p>
+			</md-list-item>
+			
+<!-- 			<md-divider></md-divider> -->
+			
+<!-- 			<md-list-item ng-class="{'active':activity=='removeobstruction'}" ng-click="activity='removeobstruction';"> -->
+<!-- 				<md-icon class="material-icons">grid_off</md-icon> -->
+<!-- 				<p>Remove obstruction</p> -->
+<!-- 			</md-list-item> -->
+			
+			<md-divider></md-divider>
+			
+			<md-subheader class="md-no-sticky">Calibration</md-subheader>
+			
+			<md-list-item ng-class="{'active':activity=='moveanchors'}" ng-click="activity='moveanchors';">
+				<md-icon class="material-icons">zoom_out_map</md-icon>
+				<p>Move anchors</p>
+				
+				<md-button class="md-icon-button md-primary md-secondary md-raised" aria-label="Settings" ng-click="launchCalibrationDialog($event)">
+					<md-icon class="material-icons">input</md-icon>
+				</md-button>
+				
+			</md-list-item>
+			
+			<md-divider></md-divider>
+			
+			<md-list-item ng-click="autoCalibrateAnchors()">
+				<md-icon class="material-icons">settings_overscan</md-icon>
+				<p>Auto calibrate anchors</p>
+			</md-list-item>
+			
+			<md-divider></md-divider>
+			
+		</md-list>
+		<md-slider-container>
+			<md-icon class="material-icons">settings_backup_restore</md-icon>
+			<md-slider flex min="-180" max="180" ng-model="form.headingCalibration" ng-change="updateHeadingCalibration()" aria-label="heading offset"></md-slider>
+			<md-input-container>
+				<input flex type="number" ng-model="form.headingCalibration" aria-label="heading offset">
+			</md-input-container>
+		</md-slider-container>		
+
+
+	</md-sidenav>
+</div>

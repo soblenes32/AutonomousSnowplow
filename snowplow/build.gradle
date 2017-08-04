@@ -1,0 +1,91 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		jcenter()
+	}
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '1.5.1.RELEASE'
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse-wtp'
+
+jar {
+    baseName = 'snowplow'
+    version =  '0.1.0'
+}
+
+repositories {
+	mavenCentral()
+	jcenter()
+	//maven  { url "http://repo1.maven.org/maven2" }
+	//maven { url 'https://jitpack.io' }
+	flatDir { dirs 'WebContent/WEB-INF/lib/' }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+	compile name: 'RXTXcomm'
+	compile files('WebContent/WEB-INF/lib/WebRXTXcomm.jar')
+	 
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.5.3.RELEASE'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '1.5.3.RELEASE'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-tomcat', version: '1.5.3.RELEASE'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '1.5.3.RELEASE'
+	compile 'org.springframework.boot:spring-boot-starter-actuator'
+
+	compile 'commons-fileupload:commons-fileupload:1.3.1'
+	compile 'commons-io:commons-io:1.3.2'
+	compile 'javax.inject:javax.inject:1'
+	compile 'org.apache.httpcomponents:httpclient:4.3.1'
+	compile group: 'commons-collections', name: 'commons-collections', version: '3.2.2'
+	compile group: 'com.pi4j', name: 'pi4j-core', version: '1.1'
+	compile group: 'com.pi4j', name: 'pi4j-device', version: '1.1'
+	compile group: 'org.springframework', name: 'spring-messaging'
+	compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+
+	compile group: 'javax.usb', name: 'usb-api', version: '1.0.2'
+	
+	
+    //Javascript libraries
+	compile group: 'org.webjars', name: 'angularjs', version: '1.6.4'
+	compile group: 'org.webjars.bower', name: 'angular-route', version: '1.6.4'
+	compile group: 'org.webjars.bower', name: 'angular-sanitize', version: '1.6.4'
+	compile group: 'org.webjars.npm', name: 'angular-animate', version: '1.6.4'
+	compile group: 'org.webjars.npm', name: 'angular-aria', version: '1.6.4'
+	compile group: 'org.webjars.npm', name: 'angular-messages', version: '1.6.4'
+	compile group: 'org.webjars', name: 'angular-material', version: '1.1.3'
+	compile group: 'org.webjars.bower', name: 'stomp-websocket', version: '2.3.4'
+	compile group: 'org.webjars', name: 'sockjs-client', version: '1.1.2'
+	compile group: 'org.webjars', name: 'd3js', version: '4.2.1'
+
+}
+
+test {
+    systemProperties 'property': 'value'
+    include 'src/test/**'
+    testClassesDir = file('WebContent/WEB-INF/classes/test')
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
+
+springBoot {
+    mainClass = "com.asl.snowplow.Application"
+    //layout = "JAR"
+    //executable = true
+}
+
+task deplexe (dependsOn: [clean, jar, bootRepackage], type:Exec) {
+	commandLine 'deployAndExecute.cmd'
+}
+jar.mustRunAfter clean
+bootRepackage.mustRunAfter jar

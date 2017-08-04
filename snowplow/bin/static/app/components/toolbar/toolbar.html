@@ -1,0 +1,37 @@
+<div ng-controller="ToolbarCtrl" layout="column" layout-align="end" >
+<!-- 	<md-button class="md-fab md-primary" ng-click="menu.isOpen=!menu.isOpen" ng-show="!menu.isOpen" aria-label="menu show"> -->
+<!-- 		<md-icon class="material-icons" >menu</md-icon> -->
+<!-- 	</md-button> -->
+
+	<md-toolbar layout="row" flex layout-align="center center"> <!-- ng-show="menu.isOpen" -->
+		<div class="md-toolbar-tools">
+<!-- 			<md-button class="md-fab md-primary md-hue-2" ng-click="menu.isOpen=!menu.isOpen" ng-show="menu.isOpen" aria-label="menu hide"> -->
+<!-- 				<md-tooltip>Shut down server</md-tooltip> -->
+<!-- 				<md-icon class="material-icons" >menu</md-icon> -->
+<!-- 			</md-button> -->
+			
+			<span flex></span>
+			
+			<section layout="row" layout-align="center center">
+				<md-button class="tbgroup md-raised" ng-class="{'md-primary md-hue-2':location.path()=='/diagnostic'}" ng-click="location.path('diagnostic')">Diagnostic</md-button>
+				<md-button class="tbgroup md-raised" ng-class="{'md-primary md-hue-2':location.path()=='/grid'}" ng-click="location.path('grid')">Grid</md-button>
+				<md-button class="tbgroup md-raised" ng-class="{'md-primary md-hue-2':location.path()=='/camera'}" ng-click="location.path('camera')">Camera</md-button>
+			</section>
+			
+			<span flex></span>
+			
+			<section layout="row" layout-align="center center">
+				<md-button class="tbgroup md-raised" ng-class="{'md-primary md-hue-2':modelService.controlMode==0}" ng-click="setCommandMode(0)">Command</md-button>
+				<md-button class="tbgroup md-raised" ng-class="{'md-primary md-hue-2':modelService.controlMode==1}" ng-click="setCommandMode(1)">Joystick</md-button>
+				<md-button class="tbgroup md-raised" ng-class="{'md-primary md-hue-2':modelService.controlMode==2}" ng-click="setCommandMode(2)">Autonomous</md-button>
+			</section>
+			
+			<span flex></span>
+			
+			<md-button class="md-icon-button" ng-click="shutdownServer()" aria-label="More">
+				<md-tooltip>Shut down server</md-tooltip>
+				<md-icon class="material-icons" >settings_power</md-icon>
+			</md-button>
+		</div>
+	</md-toolbar>
+</div>

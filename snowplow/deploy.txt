@@ -1,0 +1,4 @@
+lcd ./build/libs
+cd workspace
+mput ./snowplow-0.1.0.jar
+bye

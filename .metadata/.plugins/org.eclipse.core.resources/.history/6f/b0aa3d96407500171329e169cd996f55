@@ -1,0 +1,66 @@
+package com.asl.snowplow.model;
+
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class WorldState {
+	//VehicleState
+	@Inject
+	private VehicleState vehicleState;
+	
+	//List of AnchorStates
+	private List<AnchorState> anchorStateList = new ArrayList<AnchorState>();
+	
+	//Obstruction grid
+	private Map<Point, ZoneCell> zoneCellMap = new HashMap<Point, ZoneCell>();
+	
+	//List of lidar detection points
+	private static final int DETECTION_LIST_MAXSIZE = 1000;
+	private List<LidarPoint> lidarDetectionList = new ArrayList<>(DETECTION_LIST_MAXSIZE);
+	
+	
+
+	public VehicleState getVehicleState() {
+		return vehicleState;
+	}
+
+	public void setVehicleState(VehicleState vehicleState) {
+		this.vehicleState = vehicleState;
+	}
+
+	public List<AnchorState> getAnchorStateList() {
+		return anchorStateList;
+	}
+
+	public void setAnchorStateList(List<AnchorState> anchorStateList) {
+		this.anchorStateList = anchorStateList;
+	}
+
+	public Map<Point, ZoneCell> getZoneCellMap() {
+		return zoneCellMap;
+	}
+
+	public void setZoneCellMap(Map<Point, ZoneCell> zoneCellMap) {
+		this.zoneCellMap = zoneCellMap;
+	}
+
+	public List<LidarPoint> getLidarDetectionList() {
+		return lidarDetectionList;
+	}
+
+	public void addLidarDetectionPoint(LidarPoint lidarPoint) {
+		lidarDetectionList.add(0, lidarPoint);
+		if(lidarDetectionList.size() > DETECTION_LIST_MAXSIZE-1) {
+			lidarDetectionList.remove(DETECTION_LIST_MAXSIZE-1);
+		}
+	}
+	
+}

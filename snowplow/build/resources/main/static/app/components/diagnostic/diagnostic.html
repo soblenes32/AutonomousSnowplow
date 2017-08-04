@@ -1,0 +1,98 @@
+<div layout="column" layout-align="center center" class="background-graduate" flex>
+	<div class="faux-card" layout="column" layout-align="start" flex>
+		<table border="1" style="width:100%">
+			<thead>
+				<tr><th colspan="4" align="center">Motor state</th></tr>
+				<tr>
+					<th align="center">Motor A Target</th>
+					<th align="center">Motor A Value</th>
+					<th align="center">Motor B Target</th>
+					<th align="center">Motor B Value</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td align="center" width="25%">{{wss.vehicleState.motorATarget*100|number:0}}%</td>
+					<td align="center" width="25%">{{wss.vehicleState.motorAValue*100|number:0}}%</td>
+					<td align="center" width="25%">{{wss.vehicleState.motorBTarget*100|number:0}}%</td>
+					<td align="center" width="25%">{{wss.vehicleState.motorBValue*100|number:0}}%</td>
+				</tr>
+			</tbody>
+		</table>
+		<br/>
+		<table border="1" style="width:100%">
+			<thead>
+				<tr>
+					<th colspan="2" width="33%" align="center">Position</th>
+					<th colspan="4" width="67%" align="center">Orientation</th>
+				</tr>
+				<tr>
+					<th width="16%">X</th>
+					<th width="17%">Y</th>
+					<th width="16%">X</th>
+					<th width="16%">Y</th>
+					<th width="16%">Z</th>
+					<th>RO</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td align="center">{{wss.vehicleState.position.x|number:0}}</td>
+					<td align="center">{{wss.vehicleState.position.y|number:0}}</td>
+					<td align="center">{{wss.vehicleState.orientation.x|number:0}}</td>
+					<td align="center">{{wss.vehicleState.orientation.y|number:0}}</td>
+					<td align="center">{{wss.vehicleState.orientation.z|number:0}}</td>
+					<td align="center">{{wss.vehicleState.headingCalibration|number:0}}</td>
+				</tr>
+			</tbody>
+		</table>
+		<br/>
+		<table border="1" style="width:100%">
+			<thead>
+				<tr>
+					<th colspan="4" align="center">Anchor Positions</th>
+				</tr>
+				<tr>
+					<th>Anchor name</th>
+					<th>X</th>
+					<th>Y</th>
+					<th>Z</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="anchor in wss.anchorArr">
+					<td>{{anchor.name}}</td>
+					<td>{{anchor.position.x}}</td>
+					<td>{{anchor.position.y}}</td>
+					<td>{{anchor.position.z}}</td>
+				</tr>
+			</tbody>
+		</table>
+		<br/>
+		<table border="1" style="width:100%">
+			<thead>
+				<tr>
+					<th colspan="4" align="center">Command queue</th>
+				</tr>
+				<tr>
+					<th>Command type</th>
+					<th>Arguments</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="command in vcdms.commandArr">
+					<td>{{command.vehicleCommandType}}</td>
+					<td>{{command.args}}</td>
+					<td>
+						
+					<md-button class="md-icon-button md-accent" ng-click="rescendCommand(command)" aria-label="rescend command">
+						<md-icon class="material-icons">delete_forever</md-icon>
+					</md-button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		
+	</div>
+</div>

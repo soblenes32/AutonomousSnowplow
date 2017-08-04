@@ -1,0 +1,35 @@
+package com.asl.snowplow.service.websocket;
+
+import java.awt.Point;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.springframework.messaging.core.MessageSendingOperations;
+import org.springframework.stereotype.Service;
+
+import com.asl.snowplow.model.WorldState;
+import com.asl.snowplow.model.ZoneCell;
+
+@Service
+public class ZoneCellWebsocketService {
+
+	@Inject
+	private MessageSendingOperations<String> messagingTemplate;
+	
+	@Inject
+	WorldState worldState;
+
+	public synchronized void sendZoneCellUpdate() {
+		synchronized(messagingTemplate) {
+			messagingTemplate.convertAndSend("/toclient/zones/update", worldState.getZoneCellMap().values());
+		}
+	}
+	
+	public synchronized void sendZoneCellDelta(Map<Point, ZoneCell> deltaMap) {
+		synchronized(messagingTemplate) {
+			messagingTemplate.convertAndSend("/toclient/zones/delta", deltaMap);
+		}
+	}
+	
+}

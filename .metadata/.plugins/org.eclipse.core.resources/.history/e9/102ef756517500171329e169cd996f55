@@ -1,0 +1,114 @@
+package com.asl.snowplow.model;
+
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class WorldState {
+	//VehicleState
+	@Inject
+	private VehicleState vehicleState;
+	
+	//List of AnchorStates
+	private List<AnchorState> anchorStateList = new ArrayList<AnchorState>();
+	
+	//Obstruction grid
+	private Map<Point, ZoneCell> zoneCellMap = new HashMap<Point, ZoneCell>();
+	
+	//List of lidar detection points
+	private static final int DETECTION_LIST_MAXSIZE = 1000;
+	private List<LidarPoint> lidarDetectionList = new ArrayList<>(DETECTION_LIST_MAXSIZE);
+	
+	private double anchorMaxX = 0;
+	private double anchorMinX = 0;
+	private double anchorMaxY = 0;
+	private double anchorMinY = 0;
+	
+
+	public VehicleState getVehicleState() {
+		return vehicleState;
+	}
+
+	public void setVehicleState(VehicleState vehicleState) {
+		this.vehicleState = vehicleState;
+	}
+
+	public List<AnchorState> getAnchorStateList() {
+		return anchorStateList;
+	}
+
+	public void setAnchorStateList(List<AnchorState> anchorStateList) {
+		this.anchorStateList = anchorStateList;
+		this.anchorMaxX = this.anchorStateList.stream()
+			.max((a1, a2) -> Double.compare(a1.getPosition().getX(), a2.getPosition().getX()))
+			.get().getPosition().getX();
+		this.anchorMinX = this.anchorStateList.stream()
+			.min((a1, a2) -> Double.compare(a1.getPosition().getX(), a2.getPosition().getX()))
+			.get().getPosition().getX();
+		this.anchorMaxY = this.anchorStateList.stream()
+			.max((a1, a2) -> Double.compare(a1.getPosition().getY(), a2.getPosition().getY()))
+			.get().getPosition().getY();
+		this.anchorMinY = this.anchorStateList.stream()
+			.min((a1, a2) -> Double.compare(a1.getPosition().getY(), a2.getPosition().getY()))
+			.get().getPosition().getY();
+	}
+
+	public Map<Point, ZoneCell> getZoneCellMap() {
+		return zoneCellMap;
+	}
+
+	public void setZoneCellMap(Map<Point, ZoneCell> zoneCellMap) {
+		this.zoneCellMap = zoneCellMap;
+	}
+
+	public List<LidarPoint> getLidarDetectionList() {
+		return lidarDetectionList;
+	}
+
+	public void addLidarDetectionPoint(LidarPoint lidarPoint) {
+		lidarDetectionList.add(0, lidarPoint);
+		if(lidarDetectionList.size() > DETECTION_LIST_MAXSIZE-1) {
+			lidarDetectionList.remove(DETECTION_LIST_MAXSIZE-1);
+		}
+	}
+
+	public double getAnchorMaxX() {
+		return anchorMaxX;
+	}
+
+	public void setAnchorMaxX(double anchorMaxX) {
+		this.anchorMaxX = anchorMaxX;
+	}
+
+	public double getAnchorMinX() {
+		return anchorMinX;
+	}
+
+	public void setAnchorMinX(double anchorMinX) {
+		this.anchorMinX = anchorMinX;
+	}
+
+	public double getAnchorMaxY() {
+		return anchorMaxY;
+	}
+
+	public void setAnchorMaxY(double anchorMaxY) {
+		this.anchorMaxY = anchorMaxY;
+	}
+
+	public double getAnchorMinY() {
+		return anchorMinY;
+	}
+
+	public void setAnchorMinY(double anchorMinY) {
+		this.anchorMinY = anchorMinY;
+	}
+	
+}

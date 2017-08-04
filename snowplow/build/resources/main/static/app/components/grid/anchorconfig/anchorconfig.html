@@ -1,0 +1,44 @@
+<md-dialog aria-label="Anchor configuration" style="min-width:250px;">
+	<form ng-cloak ng-submit="formSubmit()">
+		<md-toolbar>
+			<div class="md-toolbar-tools">
+				<h2>Anchor configuration</h2>
+			</div>
+		</md-toolbar>
+		<md-dialog-content>
+			<table border="1" style="width:100%">
+				<thead>
+					<tr>
+						<th colspan="4" align="center">Anchor Positions</th>
+					</tr>
+					<tr>
+						<th>Anchor name</th>
+						<th>X</th>
+						<th>Y</th>
+						<th>Z</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="anchor in tdms.anchorArr">
+						<td>{{anchor.name}}</td>
+						<td><input ng-model="anchor.position.x"></input></td>
+						<td><input ng-model="anchor.position.y"></input></td>
+						<td><input ng-model="anchor.position.z"></input></td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<div layout="row">
+								<md-button type="submit" class="md-primary md-secondary md-raised" aria-label="Settings" flex>
+									Submit
+								</md-button>
+								<md-select ng-model="selectedPreset" ng-change="updateToPreset()" flex>
+	            					<md-option ng-repeat="preset in presets" ng-value="preset">{{preset.name}}</md-option>
+	            				</md-select>
+            				</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</md-dialog-content>
+	</form>
+</md-dialog>

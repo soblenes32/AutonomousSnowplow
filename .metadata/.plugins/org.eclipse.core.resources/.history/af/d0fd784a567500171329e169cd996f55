@@ -1,0 +1,29 @@
+package com.asl.snowplow.model;
+
+import java.awt.Point;
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+public class LidarPoint {
+	Point position = new Point();
+	@JsonIgnore
+	Date time = null;
+	public LidarPoint() {}
+	public LidarPoint(Point position, Date time) {
+		this.position = position;
+		this.time = time;
+	}
+	public Point getPosition() {
+		return position;
+	}
+	public void setPosition(Point position) {
+		this.position = position;
+	}
+	public Date getTime() {
+		return time;
+	}
+	public void setTime(Date time) {
+		this.time = time;
+	}
+}

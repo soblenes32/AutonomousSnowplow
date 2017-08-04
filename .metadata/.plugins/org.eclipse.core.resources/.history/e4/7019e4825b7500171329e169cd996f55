@@ -1,0 +1,118 @@
+package com.asl.snowplow.service;
+
+import java.awt.Point;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import com.asl.snowplow.model.VehicleState;
+import com.asl.snowplow.model.WorldState;
+import com.asl.snowplow.rplidar.RpLidarHighLevelDriver;
+import com.asl.snowplow.rplidar.RpLidarScan;
+import com.asl.snowplow.service.websocket.TelemetryWebsocketService;
+
+@Service
+public class RplidarService{
+	@Inject
+	WorldState worldState;
+	
+	@Inject
+	TelemetryWebsocketService telemetryWebsocketService;
+	
+	@Inject
+	VehicleInstructionService vehicleInstructionService;
+
+	private RpLidarHighLevelDriver driver = null;
+	private boolean initSuccess = false;
+	private double mm[] = new double[ RpLidarScan.N ];
+	private Date lastScanThreshold = new Date();
+	private long scanNumber = 0;
+	private Vector3D deviceMountedHeading = new Vector3D(0,1,0);
+	private int plotMargin = 2000; //The amount of margin in the UI plot
+	
+	@PostConstruct
+	private void init(){
+		System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/arduino" + File.pathSeparator + "/dev/rplidar");
+		driver = new RpLidarHighLevelDriver();
+		initSuccess = driver.initialize("/dev/rplidar",100);
+		//Let's just pretend it worked...
+		initSuccess = true;
+	}
+	
+	@PreDestroy
+	private void close(){
+		driver.stop();
+		initSuccess = false;
+		System.out.println("Completing PreDestroy");
+	}
+	
+	@Scheduled(fixedRate=50)
+	private void pollScan() {
+		
+		
+		//int scanCount = 0;
+		if(initSuccess) {
+			VehicleState vehicleState = worldState.getVehicleState();
+			RpLidarScan scan = new RpLidarScan();
+			if (!driver.blockCollectScan(scan, 0)) { //10000
+				System.out.println("Scan wasn't ready yet");
+			} else {
+				scanNumber++;
+				List<Point> detectionUIList = new ArrayList<>(); //This list is just to send to the UI
+				List<Point> detectionDynObsList = new ArrayList<>(); //This list is just to calculate dynamic obstructions
+				
+				scan.convertMilliMeters(mm);
+				double vehicleHeadingDegrees = vehicleInstructionService.calculateRotationToCoordinates(deviceMountedHeading, true);
+				//RpLidarScan.N: rplidar data is stored in a sparse array of 360 degrees * 64 degreefractions
+				for (int j = 0; j < RpLidarScan.N; j++) {
+					Date scanTime = new Date(scan.time[j]);
+					if( scan.distance[j] != 0 && scanTime.after(lastScanThreshold)) {
+						//scanCount++;
+						//System.out.println("Angle: " + (j/64) +", Distance (mm): " + mm[j]);
+						//double angle = (j/64) + vehicleState.getHeadingCalibration();
+						double angle = (j/64) - vehicleHeadingDegrees;
+						
+						int y = (int) (Math.sin(Math.toRadians(angle)) * mm[j]) + vehicleState.getPosition().y;
+						int x = (int) (Math.cos(Math.toRadians(angle)) * mm[j]) + vehicleState.getPosition().x;
+						
+						//Ignore detections outside of the viewing area
+						
+						if((x > worldState.getAnchorMinX() - plotMargin) && 
+							(x < worldState.getAnchorMaxX() + plotMargin) && 
+							(y > worldState.getAnchorMinY() - plotMargin) && 
+							(y < worldState.getAnchorMaxY() + plotMargin)) {
+							
+							Point p = new Point(x,y);
+							detectionUIList.add(p);
+							
+							//Further restrict detections to within anchor boundaries (no margin) for obstruction processing
+							if((x > worldState.getAnchorMinX()) && 
+									(x < worldState.getAnchorMaxX()) && 
+									(y > worldState.getAnchorMinY()) && 
+									(y < worldState.getAnchorMaxY())) {
+								detectionDynObsList.add(p);
+							}
+						}
+					}
+				}
+				//System.out.println("Scan count in 1/20 second: " + scanCount);
+				lastScanThreshold = new Date();
+				if(scanNumber%2 == 0) {
+					telemetryWebsocketService.sendLidarDetectionList(detectionUIList);
+				}
+				worldState.registerLidarScans(detectionDynObsList, scanNumber);
+			}
+		}else {
+			//Lidar not initialized
+		}
+	}
+}

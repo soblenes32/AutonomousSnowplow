@@ -1,0 +1,79 @@
+<md-content 
+	ng-controller="SidenavCtrl" 
+	layout="column" 
+	layout-align="center" 
+	ng-class="{'ie-min-width':mdMedia('gt-sm')}" ng-cloak>
+
+	<md-sidenav class="md-sidenav-left"
+		md-component-id="left-sidenav"
+		md-is-locked-open="modelService.isLeftNavOpenMobile || mdMedia('gt-sm')"
+		flex>
+		
+
+		<md-content flex>
+			<md-list class="md-dense">
+			
+				<!-- HOME -->
+				<md-list-item class="md-1-line" ng-class="{'active':location.path()=='/home' || location.path()=='/'}" ng-click="location.path('/')" flex>
+					<md-icon md-font-library="material-icons" class="md-primary">home</md-icon>
+					<div class="md-list-item-text" layout="column">Home</div>
+					<span flex class="flex"></span>
+					<md-icon md-font-library="material-icons">chevron_right</md-icon>
+				</md-list-item>
+				<md-divider></md-divider>
+			
+				<!-- MY PROFILE -->
+				<md-list-item class="md-1-line" ng-class="{'active':location.path()=='/profile'}" ng-click="location.path('profile')" flex>
+					<md-icon md-font-library="material-icons" class="md-primary">folder_shared</md-icon>
+					<div class="md-list-item-text" layout="column">My profile</div>
+					<span flex class="flex"></span>
+					<md-icon md-font-library="material-icons">chevron_right</md-icon>
+				</md-list-item>
+				<md-divider></md-divider>
+				
+				<!-- NEW ROTATION -->
+				<md-list-item class="md-1-line" ng-class="{'active':location.path()=='/newrotation'}" ng-click="location.path('newrotation')" 
+					ng-if="ups.isPermittedCreateRotation(modelService.myData.userT)" flex>
+					<md-icon md-font-library="material-icons" class="md-primary">loop</md-icon>
+					<div class="md-list-item-text" layout="column">Create rotation</div>
+					<span flex class="flex"></span>
+					<md-icon md-font-library="material-icons">chevron_right</md-icon>
+				</md-list-item>
+				<md-divider ng-if="ups.isPermittedCreateRotation(modelService.myData.userT)"></md-divider>
+				
+				<!-- FIND ROTATION -->
+				<md-list-item class="md-1-line" ng-class="{'active':location.path()=='/findrotation' || location.path()=='/rotationsummary'}" ng-click="location.path('findrotation')" 
+					ng-if="ups.isPermittedSearchRotation(modelService.myData.userT)" flex>
+					<md-icon md-font-library="material-icons" class="md-primary">search</md-icon>
+					<div class="md-list-item-text" layout="column">Search rotations</div>
+					<span flex class="flex"></span>
+					<md-icon md-font-library="material-icons">chevron_right</md-icon>
+				</md-list-item>
+				<md-divider ng-if="ups.isPermittedSearchRotation(modelService.myData.userT)"></md-divider>
+				
+				<!-- REVIEW ROLE APPROVAL REQUESTS -->
+				<md-list-item class="md-1-line" ng-class="{'active':location.path()=='/roleapprovals'}" ng-click="location.path('roleapprovals')" 
+					ng-if="ups.isPermittedViewApproveMainMenu(modelService.myData.userT)" flex>
+					<md-icon md-font-library="material-icons" class="md-primary">thumbs_up_down</md-icon>
+					<div class="md-list-item-text" layout="column">Role Approvals</div>
+					<span flex class="flex"></span>
+					<md-icon md-font-library="material-icons">chevron_right</md-icon>
+				</md-list-item>
+				<md-divider ng-if="ups.isPermittedViewApproveMainMenu(modelService.myData.userT)"></md-divider>
+				
+				<!-- REVIEW ROLE APPROVAL REQUESTS -->
+				<md-list-item class="md-1-line" ng-class="{'active':location.path()=='/instaffiliations'}" ng-click="location.path('instaffiliations')" 
+					ng-if="ups.isPermittedViewInstAssociations(modelService.myData.userT)" flex>
+					<md-icon md-font-library="material-icons" class="md-primary">account_balance</md-icon>
+					<div class="md-list-item-text" layout="column">Affiliations</div>
+					<span flex class="flex"></span>
+					<md-icon md-font-library="material-icons">chevron_right</md-icon>
+				</md-list-item>
+				<md-divider ng-if="ups.isPermittedViewInstAssociations(modelService.myData.userT)"></md-divider>
+				
+			</md-list>
+		</md-content>
+
+
+	</md-sidenav>
+</md-content>

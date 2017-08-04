@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item value="false" key="isRegEx"/>
+		<item value="" key="selection"/>
+		<item value="false" key="casesensitive"/>
+		<item value="false" key="incremental"/>
+		<item value="true" key="wrap"/>
+		<item value="false" key="wholeword"/>
+		<list key="findhistory">
+			<item value="360"/>
+			<item value="anchorsta"/>
+			<item value="readNumber"/>
+			<item value="shutdown"/>
+			<item value="run"/>
+			<item value="sending"/>
+			<item value="list"/>
+			<item value="start0 =="/>
+			<item value="parseScan"/>
+			<item value="parseData"/>
+			<item value="parsePacket"/>
+			<item value="lastReceived"/>
+			<item value="port ident"/>
+			<item value="excep"/>
+			<item value="RCV_SCAN"/>
+		</list>
+		<list key="replacehistory">
+			<item value="scanNumber"/>
+			<item value="getVehicleState"/>
+			<item value="worldState"/>
+			<item value="yCoord"/>
+			<item value="xCoord"/>
+			<item value="transactionInitiate"/>
+			<item value="transactionCallback"/>
+			<item value="1.6.4"/>
+			<item value="policyDecisionExplanation"/>
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item value="282" key="DIALOG_WIDTH"/>
+		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
+		<item value="391" key="DIALOG_HEIGHT"/>
+		<item value="1424" key="DIALOG_X_ORIGIN"/>
+		<item value="564" key="DIALOG_Y_ORIGIN"/>
+	</section>
+</section>

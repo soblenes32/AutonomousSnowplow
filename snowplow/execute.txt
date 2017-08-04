@@ -1,0 +1,3 @@
+cd workspace
+chmod 755 snowplow-0.1.0.jar
+sudo java -jar ./snowplow-0.1.0.jar

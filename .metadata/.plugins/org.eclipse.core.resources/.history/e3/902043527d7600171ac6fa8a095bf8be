@@ -1,0 +1,164 @@
+package com.asl.snowplow.model;
+
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import com.asl.snowplow.service.VehicleInstructionService;
+
+@Service
+public class WorldState {
+	//VehicleState
+	@Inject
+	private VehicleState vehicleState;
+	
+	//List of AnchorStates
+	private List<AnchorState> anchorStateList = new ArrayList<AnchorState>();
+	
+	//ZoneCell grid, keyed on zonecell index
+	private Map<Point, ZoneCell> zoneCellMap = new HashMap<Point, ZoneCell>();
+	
+	//Number of lidar scans to keep: 20 scans per second * 3 seconds = 60
+	private static final int SCAN_RETENTION_WINDOW = 60; 
+	//The percent of scans that must be positive within a single retention window for registration of a new obstruction
+	private static final float NEW_OBSTRUCTION_REGISTRATION_THRESHOLD = 0.40f; 
+	//Map of lidar detections by scan number indexed on zoneCellIndex
+	private Map<Point, Set<Long>> lidarDetectionMap = new HashMap<>();
+	
+	private double anchorMaxX = 0;
+	private double anchorMinX = 0;
+	private double anchorMaxY = 0;
+	private double anchorMinY = 0;
+	
+	/*****************************************************************************
+	 * Saves the lidar scan detections to each zoneCell index. Cleans out old
+	 * lidar scans. Identifies new obstructions as a result of the latest scan
+	 * 
+	 * @return true if any new obstructions were detected on this scan. false 
+	 * otherwise
+	 *****************************************************************************/
+	public boolean registerLidarScans(List<Point> lpList, long scanNumber) {
+		boolean foundNewObstructions = false;
+		for(Point lp: lpList) {
+			//Add the scanNumber to lidarDetectionMap for the new detections
+			Point lpZoneCellIdx = VehicleInstructionService.positionToZoneCellIdx(lp);
+			Set<Long> scanNumberDetectionSet = lidarDetectionMap.get(lpZoneCellIdx);
+			if(scanNumberDetectionSet == null) {
+				scanNumberDetectionSet = new HashSet<>();
+				lidarDetectionMap.put(lpZoneCellIdx, scanNumberDetectionSet);
+			}
+			scanNumberDetectionSet.add(scanNumber);
+		}
+		
+		//debug
+		long numberZoneCellsWithDetections = lidarDetectionMap.values().stream().max((p1, p2) -> Long.compare( p1.size(), p2.size())).get().size();
+		System.out.println("Max detections out of 60: " + numberZoneCellsWithDetections);
+		
+		//Clean up all the detection scan numbers that are too old
+		long outOfRangeScanNumber = scanNumber - SCAN_RETENTION_WINDOW;
+		for(Set<Long> scanSet: lidarDetectionMap.values()) {
+			scanSet.remove(outOfRangeScanNumber);
+		}
+		
+		//Mark new obstructions
+		for(Point idx: lidarDetectionMap.keySet()) {
+			Set<Long> scanNumberDetectionSet = lidarDetectionMap.get(idx);
+			float detectionRatio = scanNumberDetectionSet.size() / SCAN_RETENTION_WINDOW;
+			if(detectionRatio >= NEW_OBSTRUCTION_REGISTRATION_THRESHOLD) {
+				//Update or create the zoneCell
+				ZoneCell zc = zoneCellMap.get(idx);
+				if(zc == null) {
+					zc = new ZoneCell();
+					zoneCellMap.put(idx, zc);
+				}
+				if(!zc.isObstruction()) {
+					zc.setObstruction(true);
+					zc.setDynamicObstruction(true);
+					foundNewObstructions = true;
+				}
+			}
+		}
+		return foundNewObstructions;
+	}
+
+	public VehicleState getVehicleState() {
+		return vehicleState;
+	}
+
+	public void setVehicleState(VehicleState vehicleState) {
+		this.vehicleState = vehicleState;
+	}
+
+	public List<AnchorState> getAnchorStateList() {
+		return anchorStateList;
+	}
+
+	public void setAnchorStateList(List<AnchorState> anchorStateList) {
+		this.anchorStateList = anchorStateList;
+		updateAnchorState();
+	}
+	
+	public void updateAnchorState() {
+		this.anchorMaxX = this.anchorStateList.stream()
+				.max((a1, a2) -> Double.compare(a1.getPosition().getX(), a2.getPosition().getX()))
+				.get().getPosition().getX();
+			this.anchorMinX = this.anchorStateList.stream()
+				.min((a1, a2) -> Double.compare(a1.getPosition().getX(), a2.getPosition().getX()))
+				.get().getPosition().getX();
+			this.anchorMaxY = this.anchorStateList.stream()
+				.max((a1, a2) -> Double.compare(a1.getPosition().getY(), a2.getPosition().getY()))
+				.get().getPosition().getY();
+			this.anchorMinY = this.anchorStateList.stream()
+				.min((a1, a2) -> Double.compare(a1.getPosition().getY(), a2.getPosition().getY()))
+				.get().getPosition().getY();
+	}
+
+	public Map<Point, ZoneCell> getZoneCellMap() {
+		return zoneCellMap;
+	}
+
+	public void setZoneCellMap(Map<Point, ZoneCell> zoneCellMap) {
+		this.zoneCellMap = zoneCellMap;
+	}
+
+	public double getAnchorMaxX() {
+		return anchorMaxX;
+	}
+
+	public void setAnchorMaxX(double anchorMaxX) {
+		this.anchorMaxX = anchorMaxX;
+	}
+
+	public double getAnchorMinX() {
+		return anchorMinX;
+	}
+
+	public void setAnchorMinX(double anchorMinX) {
+		this.anchorMinX = anchorMinX;
+	}
+
+	public double getAnchorMaxY() {
+		return anchorMaxY;
+	}
+
+	public void setAnchorMaxY(double anchorMaxY) {
+		this.anchorMaxY = anchorMaxY;
+	}
+
+	public double getAnchorMinY() {
+		return anchorMinY;
+	}
+
+	public void setAnchorMinY(double anchorMinY) {
+		this.anchorMinY = anchorMinY;
+	}
+	
+}

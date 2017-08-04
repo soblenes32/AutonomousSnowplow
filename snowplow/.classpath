@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/main/resources"/>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="E:/Dev/workspaces/snowplow/snowplow/WebContent/WEB-INF/lib/RXTXcomm.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-web/1.5.3.RELEASE/37469baf2a75a9d2230391a5038f49d4018d2bcc/spring-boot-starter-web-1.5.3.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-web/1.5.3.RELEASE/b485501aac1056fce06e67f847a1364a5f9a092/spring-boot-starter-web-1.5.3.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-security/1.5.3.RELEASE/f814211730a1925389ffa5c033d30d249435fc99/spring-boot-starter-security-1.5.3.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-security/1.5.3.RELEASE/1dc0afda60c239248d3ea47bec926ddb7704ab1c/spring-boot-starter-security-1.5.3.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-tomcat/1.5.3.RELEASE/1b71416805e0bbf6885ee65aae440adbad0afe60/spring-boot-starter-tomcat-1.5.3.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-tomcat/1.5.3.RELEASE/6cd6e1c635ac9e54c8b344de5dc990b464e8608f/spring-boot-starter-tomcat-1.5.3.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-websocket/1.5.3.RELEASE/e62e9b2d73b548fc6b8f1ad271e2245335854d73/spring-boot-starter-websocket-1.5.3.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-websocket/1.5.3.RELEASE/c6692fcc5e0c2fd7935d83e833b6dd3f1b4cc44f/spring-boot-starter-websocket-1.5.3.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-actuator/1.5.1.RELEASE/4060b215004094bfd9f1bfa4f6e6e7ff09178e22/spring-boot-starter-actuator-1.5.1.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-actuator/1.5.1.RELEASE/5f8c9e75c599dbd15c227db8093bf7e40fb29fad/spring-boot-starter-actuator-1.5.1.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/commons-fileupload/commons-fileupload/1.3.1/c621b54583719ac0310404463d6d99db27e1052c/commons-fileupload-1.3.1.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/commons-fileupload/commons-fileupload/1.3.1/a1fa20f7f3ad210f4b2eb51b63be3f0273be263a/commons-fileupload-1.3.1-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/1.3.2/b6dde38349ba9bb5e6ea6320531eae969985dae5/commons-io-1.3.2.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/1.3.2/b41a5f39fa90007a6c247175933555ba5f166d70/commons-io-1.3.2-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/javax.inject/javax.inject/1/6975da39a7040257bd51d21a231b76c915872d38/javax.inject-1.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/javax.inject/javax.inject/1/a00123f261762a7c5e0ec916a2c7c8298d29c400/javax.inject-1-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpclient/4.3.1/ec13f6423eb6d5858e229939a2bc118473ef94c/httpclient-4.3.1.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpclient/4.3.1/9276b487382d11537802275ef71050f17d5f4305/httpclient-4.3.1-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/commons-collections/commons-collections/3.2.2/8ad72fe39fa8c91eaaf12aadb21e0c3661fe26d5/commons-collections-3.2.2.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/commons-collections/commons-collections/3.2.2/78c50ebda5784937ca1615fc0e1d0cb35857d572/commons-collections-3.2.2-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/com.pi4j/pi4j-core/1.1/a9d5bdad79287c6e91d49ccbbc388141ad3b6b4e/pi4j-core-1.1.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/com.pi4j/pi4j-core/1.1/a0d03930cc29bc66a5807f9cf68536b9a8feb81a/pi4j-core-1.1-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/com.pi4j/pi4j-device/1.1/69890dc90063560fe16cf040df1d70dd9696eade/pi4j-device-1.1.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/com.pi4j/pi4j-device/1.1/63171041827bc082671aabb38a9f8e3a6a28ec2b/pi4j-device-1.1-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework/spring-messaging/4.3.6.RELEASE/3d90c5943c8ee933665a11e95b6ad21e54aac7fc/spring-messaging-4.3.6.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework/spring-messaging/4.3.6.RELEASE/1cdbe6e09c0456655aa359a0482f905bedbfc76b/spring-messaging-4.3.6.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-math3/3.6.1/e4ba98f1d4b3c80ec46392f25e094a6a2e58fcbf/commons-math3-3.6.1.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-math3/3.6.1/8fab23986ea8886af34818daf32a718e81dc98ba/commons-math3-3.6.1-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/javax.usb/usb-api/1.0.2/f0ae0d322a99811cf79d508d37f3dc2d82753070/usb-api-1.0.2.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/javax.usb/usb-api/1.0.2/4b6337e574535ac803bbc05f3f22808d8bdba0d0/usb-api-1.0.2-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars/angularjs/1.6.4/be6dcb095f84e5d717b96d85cea27326f769ee8f/angularjs-1.6.4.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars/angularjs/1.6.4/536a9a2641fd0d7b69bebba03a3428140286800d/angularjs-1.6.4-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars.bower/angular-route/1.6.4/fbcd80913abad9c8e5ead91091979961061eb13c/angular-route-1.6.4.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars.bower/angular-route/1.6.4/b04f3ee8f5e43fa3b162981b50bb72fe1acabb33/angular-route-1.6.4-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars.bower/angular-sanitize/1.6.4/ec612752f72821ab0b5182bf4f382dd43a56dc43/angular-sanitize-1.6.4.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars.bower/angular-sanitize/1.6.4/b04f3ee8f5e43fa3b162981b50bb72fe1acabb33/angular-sanitize-1.6.4-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars.npm/angular-animate/1.6.4/eae5a9afb24a6f1270c296507d54cf1b004705a1/angular-animate-1.6.4.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars.npm/angular-animate/1.6.4/b04f3ee8f5e43fa3b162981b50bb72fe1acabb33/angular-animate-1.6.4-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars.npm/angular-aria/1.6.4/2bd00f1620914f34be5355d96023a6362c86e77f/angular-aria-1.6.4.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars.npm/angular-aria/1.6.4/b04f3ee8f5e43fa3b162981b50bb72fe1acabb33/angular-aria-1.6.4-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars.npm/angular-messages/1.6.4/64bef4b5a3fb27684c00e0dc3291bfb6af2732b2/angular-messages-1.6.4.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars.npm/angular-messages/1.6.4/b04f3ee8f5e43fa3b162981b50bb72fe1acabb33/angular-messages-1.6.4-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars/angular-material/1.1.3/81e0c7727f7a7ab4062f105524cd8345822af77b/angular-material-1.1.3.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars.bower/stomp-websocket/2.3.4/a952882dceb973fdab0fb94096b9953700f27769/stomp-websocket-2.3.4.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars.bower/stomp-websocket/2.3.4/b04f3ee8f5e43fa3b162981b50bb72fe1acabb33/stomp-websocket-2.3.4-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars/sockjs-client/1.1.2/10be7e6f6ac454fba22005ed81f773575292fd8b/sockjs-client-1.1.2.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars/d3js/4.2.1/89fe2e85b77726c2cb9ed8a3081bc6dbb1e3b737/d3js-4.2.1.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars/d3js/4.2.1/31c388974d464dff7b7f2d36867d0e163038c736/d3js-4.2.1-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter/1.5.1.RELEASE/5fb187e6a363b9145e3f7f18130ba64e9e22dad8/spring-boot-starter-1.5.1.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter/1.5.1.RELEASE/c51d073f152caaa87db0a962a5d4a9a378e2a778/spring-boot-starter-1.5.1.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.hibernate/hibernate-validator/5.3.4.Final/2f6c8c0b646afe18e3ad205726729d3c4a85fe2e/hibernate-validator-5.3.4.Final.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.hibernate/hibernate-validator/5.3.4.Final/682ddc8e119408406046da3bd484d986a60fd4ee/hibernate-validator-5.3.4.Final-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.8.6/c43de61f74ecc61322ef8f402837ba65b0aa2bf4/jackson-databind-2.8.6.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.8.6/b4fa0bfb592813e6753f25719501cf6f803a2bd1/jackson-databind-2.8.6-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework/spring-web/4.3.6.RELEASE/8b8bf8fc6ed4acd5ae0baa6179f1cccc52aaa9aa/spring-web-4.3.6.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework/spring-web/4.3.6.RELEASE/e41b15afc71764f982eec257729ac3fddda78f3e/spring-web-4.3.6.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework/spring-webmvc/4.3.6.RELEASE/ea55690d6d61ad70e2569db1e1add1603e427862/spring-webmvc-4.3.6.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework/spring-webmvc/4.3.6.RELEASE/51719142a860240ba4648bb6384e5653bffc82e9/spring-webmvc-4.3.6.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework/spring-aop/4.3.6.RELEASE/d70b2393d380cd468d9a14969efaf9022c67c0/spring-aop-4.3.6.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework/spring-aop/4.3.6.RELEASE/c6d15c225b300c981060c8c2beb26bf4a8914232/spring-aop-4.3.6.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.security/spring-security-config/4.2.1.RELEASE/fe8b195415728d8c380531531ce0da5b40bd547f/spring-security-config-4.2.1.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.security/spring-security-config/4.2.1.RELEASE/8e459366888dd7719e0d2f3e3d8eef9b12262cb3/spring-security-config-4.2.1.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.security/spring-security-web/4.2.1.RELEASE/31a526327f419664fe27455d5b2538a1b4aa5dee/spring-security-web-4.2.1.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.security/spring-security-web/4.2.1.RELEASE/31bf986f9864dd16471deb4a80e2eabf6b1b6997/spring-security-web-4.2.1.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.apache.tomcat.embed/tomcat-embed-core/8.5.11/72761f51fc7cef3ee19d4aafc7adc605df9f611f/tomcat-embed-core-8.5.11.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.apache.tomcat.embed/tomcat-embed-core/8.5.11/83cbe61a663259e7ef33943810ac328cfacfc67b/tomcat-embed-core-8.5.11-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.apache.tomcat.embed/tomcat-embed-el/8.5.11/60253815b897166903bf5ec41219c5bb15333a69/tomcat-embed-el-8.5.11.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.apache.tomcat.embed/tomcat-embed-el/8.5.11/9fced5b3e9abd64d82df145bb1985ba52cf7e040/tomcat-embed-el-8.5.11-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.apache.tomcat.embed/tomcat-embed-websocket/8.5.11/dfa65e7857d46630761c0571758a56f7cbd1e9ba/tomcat-embed-websocket-8.5.11.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.apache.tomcat.embed/tomcat-embed-websocket/8.5.11/d5b140d178a7ce02dc1877c9c2a97d71c8b9bc7c/tomcat-embed-websocket-8.5.11-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework/spring-websocket/4.3.6.RELEASE/42505e525ece035ea56caee12832911282bc131/spring-websocket-4.3.6.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework/spring-websocket/4.3.6.RELEASE/14a72d47ae4b307d71b78cd2e59607d00ae539b1/spring-websocket-4.3.6.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-actuator/1.5.1.RELEASE/bf228e8d8b732d7a0a107cd2c68d786cc4fbb4a1/spring-boot-actuator-1.5.1.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-actuator/1.5.1.RELEASE/860b79541669cee3cf936991a5cddd77fdd2645c/spring-boot-actuator-1.5.1.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpcore/4.4.6/e3fd8ced1f52c7574af952e2e6da0df8df08eb82/httpcore-4.4.6.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpcore/4.4.6/57cc0a7af46d66754e632bddc558a913b9e66ac3/httpcore-4.4.6-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/commons-codec/commons-codec/1.10/4b95f4897fa13f2cd904aee711aeafc0c5295cd8/commons-codec-1.10.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/commons-codec/commons-codec/1.10/11fb3d88ae7e3b757d70237064210ceb954a5a04/commons-codec-1.10-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/com.pi4j/pi4j-gpio-extension/1.1/5c2b3967b62d9614d304d37821be84ba46496d3a/pi4j-gpio-extension-1.1.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/com.pi4j/pi4j-gpio-extension/1.1/4eca02827067961ea4d1651939035ccf8e07deeb/pi4j-gpio-extension-1.1-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework/spring-beans/4.3.6.RELEASE/1585715ed598b76a23dac931c27aa039b189eafb/spring-beans-4.3.6.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework/spring-beans/4.3.6.RELEASE/9a93dd1daa209146297f0d0a1ba900be43cbee50/spring-beans-4.3.6.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework/spring-context/4.3.6.RELEASE/5f3041020113e3202a7ae9defe36e7b5d2fb87eb/spring-context-4.3.6.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework/spring-context/4.3.6.RELEASE/49943c4c9945a5a4e256d7e360ad3872696a769e/spring-context-4.3.6.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework/spring-core/4.3.6.RELEASE/690da099c3c2d2536210f0fd06ff3f336de43ad9/spring-core-4.3.6.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework/spring-core/4.3.6.RELEASE/45f4d3c6337a323202f4bc0a9adbd3e1d595cb18/spring-core-4.3.6.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars.bower/angular/1.6.4/541fa8690539f7e1eea820b57d5054b452bcd261/angular-1.6.4.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.webjars.bower/angular/1.6.4/b04f3ee8f5e43fa3b162981b50bb72fe1acabb33/angular-1.6.4-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot/1.5.1.RELEASE/670ebd283098aa2d8a397af84fbe6ea152a4d8fa/spring-boot-1.5.1.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot/1.5.1.RELEASE/968ad62e3e8cd296a6149678e6b09cc3b1030fb0/spring-boot-1.5.1.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-autoconfigure/1.5.1.RELEASE/251d960da2d5adfd55cf0281fcdfa69ab525a36d/spring-boot-autoconfigure-1.5.1.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-autoconfigure/1.5.1.RELEASE/2353af62fb55e5c78a649e115b81a8916d99632a/spring-boot-autoconfigure-1.5.1.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-logging/1.5.1.RELEASE/889d35cc87daa453a823056798a4039cd321952a/spring-boot-starter-logging-1.5.1.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-logging/1.5.1.RELEASE/c162a909d0b676175ebf46b76ca14c4a56cbdefd/spring-boot-starter-logging-1.5.1.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.yaml/snakeyaml/1.17/7a27ea250c5130b2922b86dea63cbb1cc10a660c/snakeyaml-1.17.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.yaml/snakeyaml/1.17/63577e87886c76228db9f8a2c50ea43cde5072eb/snakeyaml-1.17-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/javax.validation/validation-api/1.1.0.Final/8613ae82954779d518631e05daa73a6a954817d5/validation-api-1.1.0.Final.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/javax.validation/validation-api/1.1.0.Final/7d49b53caed9bd81d172807c3e096d24f3c57090/validation-api-1.1.0.Final-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.jboss.logging/jboss-logging/3.3.0.Final/3616bb87707910296e2c195dc016287080bba5af/jboss-logging-3.3.0.Final.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.jboss.logging/jboss-logging/3.3.0.Final/3625e6818158ddb4754fa2ec51299e5f57e596b4/jboss-logging-3.3.0.Final-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/com.fasterxml/classmate/1.3.3/864c8e370a691e343210cc7c532fc198cee460d8/classmate-1.3.3.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/com.fasterxml/classmate/1.3.3/959904631fc3caef02ab82c4ee31c6882b910b12/classmate-1.3.3-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.8.0/45b426f7796b741035581a176744d91090e2e6fb/jackson-annotations-2.8.0.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.8.0/29a1a95363d497e856c0a7d682e4f7973e334068/jackson-annotations-2.8.0-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.8.6/2ef7b1cc34de149600f5e75bc2d5bf40de894e60/jackson-core-2.8.6.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.8.6/36af810d532d0b79feb391519efddce81f0afa7/jackson-core-2.8.6-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework/spring-expression/4.3.6.RELEASE/13b53568cfd7b308e70efcbac6cdd0c5d597ba1/spring-expression-4.3.6.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework/spring-expression/4.3.6.RELEASE/ba3bb5030b02ded635044da772c27fce7220523f/spring-expression-4.3.6.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.security/spring-security-core/4.2.1.RELEASE/4e8ae0eb3218e1cacc3d7bd2eb41929799340618/spring-security-core-4.2.1.RELEASE.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.springframework.security/spring-security-core/4.2.1.RELEASE/769c71e5a9b5f5f40c075d3d158e3d54c051dd36/spring-security-core-4.2.1.RELEASE-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/ch.qos.logback/logback-classic/1.1.9/978cd9fbb43b7abed6379d7b02de052d216e30fc/logback-classic-1.1.9.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/ch.qos.logback/logback-classic/1.1.9/247b33c9bb67469a0a77543691859c1fb34fb8be/logback-classic-1.1.9-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.slf4j/jcl-over-slf4j/1.7.22/86ceac14535af5a42c8fb0d06d79b925dd3cb263/jcl-over-slf4j-1.7.22.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.slf4j/jcl-over-slf4j/1.7.22/b03a290ee39cf7c2eed57a73402ce25d9f76ff00/jcl-over-slf4j-1.7.22-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.slf4j/jul-to-slf4j/1.7.22/b0429e950b3d2bc2c39c1bacafac753edbe3781c/jul-to-slf4j-1.7.22.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.slf4j/jul-to-slf4j/1.7.22/d2158381996b93b2463199e0f6fd3bbdab8bed37/jul-to-slf4j-1.7.22-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.slf4j/log4j-over-slf4j/1.7.22/a527c37e9ca6c3d19ba298edd4aa344ca751a203/log4j-over-slf4j-1.7.22.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.slf4j/log4j-over-slf4j/1.7.22/8a3cc85e3fbf330e2463142047cc38fba3ad1886/log4j-over-slf4j-1.7.22-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/ch.qos.logback/logback-core/1.1.9/e05d0cb67220937c32d7b4e5a47f967605376f63/logback-core-1.1.9.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/ch.qos.logback/logback-core/1.1.9/cd472361a8018f1fa2acef571486bb9fb96b8cf3/logback-core-1.1.9-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.22/a1c83373863cec7ae8d89dc1c5722d8cb6ec0309/slf4j-api-1.7.22.jar" sourcepath="C:/Users/Sam/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.22/2b9722cdf33bd0b1d1639a98034dde38b156ad34/slf4j-api-1.7.22-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/RXTXcomm.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

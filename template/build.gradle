@@ -1,0 +1,70 @@
+buildscript {
+	repositories {
+		maven  { url "http://repo1.maven.org/maven2" }
+	}
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'eclipse-wtp'
+apply plugin: 'spring-boot'
+
+jar {
+    baseName = 'robo'
+    version =  '0.1.0'
+}
+
+repositories {
+	maven  { url "http://repo1.maven.org/maven2" }
+	flatDir { dirs 'WebContent/WEB-INF/lib/' }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    //compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    //compile 'org.springframework.boot:spring-boot-starter-data-rest'
+    //compile 'org.springframework.boot:spring-boot-starter-jdbc'
+    compile 'org.springframework.boot:spring-boot-starter-security'
+    compile 'org.springframework.boot:spring-boot-starter-tomcat'
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    
+    compile 'commons-fileupload:commons-fileupload:1.3.1'
+    compile 'commons-io:commons-io:1.3.2'
+    compile 'javax.inject:javax.inject:1'
+	compile 'org.apache.httpcomponents:httpclient:4.3.1'
+    //compile 'mysql:mysql-connector-java:5.1.23'
+    //providedCompile 'javax:javaee-api:6.0'
+    //providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    
+    //Javascript libraries
+	compile 'org.webjars:angularjs:1.6.0'
+	compile 'org.webjars.bower:angular-route:1.6.1'
+	compile group: 'org.webjars', name: 'angular-sanitize', version: '1.3.11'
+	compile group: 'org.webjars.bower', name: 'angular-animate', version: '1.6.1'
+	compile group: 'org.webjars.bower', name: 'angular-aria', version: '1.6.1'
+	compile group: 'org.webjars.bower', name: 'angular-messages', version: '1.6.1'
+	compile group: 'org.webjars.bower', name: 'angular-material', version: '1.1.1'
+	
+	//compile group: 'org.webjars', name: 'dropzone', version: '4.3.0-2'
+}
+
+test {
+    systemProperties 'property': 'value'
+    include 'src/test/**'
+    testClassesDir = file('WebContent/WEB-INF/classes/test')
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
+
+springBoot {
+    mainClass = "com.asl.robo.Application"
+    //executable = true
+}
