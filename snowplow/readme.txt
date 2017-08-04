@@ -1,4 +1,4 @@
-Date: 2016/04/27 
+Date: 2017/07/27 
 Author: Samuel O'Blenes 
 
 Notes:
@@ -11,14 +11,3 @@ sudo cp /usr/lib/jni/librxtxSerial.so /usr/lib
 sudo cp /usr/lib/jni/librxtxParallel.so /usr/lib
 Properties locations
 /usr/java/packages/lib/arm:/lib:/usr/lib
-
-
-
-
-
-
-
-Things to fix:
-Add filter to motion input; if moves more than 0.5m since last frame, throw out the frame; cannot throw out two in a row
-Preset anchor locations missing a 0
-Upon page load, the zone cells should be initialized from the server
