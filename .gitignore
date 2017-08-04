@@ -16,3 +16,7 @@ hs_err_pid*
 
 #eclipse metadata
 *.metadata
+
+*.gradle
+/bin/*
+/build/*
