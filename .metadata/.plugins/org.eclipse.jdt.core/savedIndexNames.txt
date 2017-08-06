@@ -23,7 +23,6 @@ INDEX VERSION 1.130+E:\Dev\workspaces\snowplow\.metadata\.plugins\org.eclipse.jd
 2997567257.index
 1837141242.index
 3525602378.index
-1067419512.index
 1847521381.index
 4251332143.index
 1744051151.index
@@ -49,8 +48,8 @@ INDEX VERSION 1.130+E:\Dev\workspaces\snowplow\.metadata\.plugins\org.eclipse.jd
 1520045391.index
 1608191715.index
 3823404951.index
-52530038.index
 916295605.index
+52530038.index
 2577317663.index
 2841427096.index
 302637506.index

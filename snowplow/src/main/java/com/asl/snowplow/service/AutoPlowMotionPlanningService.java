@@ -80,12 +80,14 @@ public class AutoPlowMotionPlanningService{
 		List<PlowVector> plowVectorList = new ArrayList<PlowVector>();
 		int[] directions = {1,2,-1,-2};
 		
+		//Start with all the available plowed zone cells
 		List<Point> plowedSnowZoneCellIdxList = worldState.getZoneCellMap().values().stream().filter((zc)->{
 			return zc.isPlowedSnowZone() && !zc.isObstruction();
 		}).map((zc)->{
 			return zc.getCoordinates();
 		}).collect(Collectors.toList());
 		
+		//...and check each direction from them for valid plow vectors
 		for(Point origin:plowedSnowZoneCellIdxList){
 			for(int direction: directions){
 				Point p = findNextZoneCell(origin, direction);
@@ -121,10 +123,11 @@ public class AutoPlowMotionPlanningService{
 		double distanceFromOriginM = currentZoneCellIdx.distance(plowedSnowZoneOriginIdx) / 10;
 		
 		ZoneCell currentZoneCell = worldState.getZoneCellMap().get(currentZoneCellIdx);
-		boolean isStopHere = (currentZoneCell != null && (currentZoneCell.isPlowedSnowZone() || currentZoneCell.isObstruction())) || (distanceFromOriginM > maxDistanceM);
+		boolean isCurrentCellObstructed = vehicleInstructionService.isZoneCellObstructed(currentZoneCellIdx, vehicleState.getObstructionSearchRadius());
+		boolean isStopHere = (currentZoneCell != null && (currentZoneCell.isPlowedSnowZone() || isCurrentCellObstructed)) || (distanceFromOriginM > maxDistanceM);
 
 		//if ran into an obstructed zoneCell, and the plowvector is valid then backup the source coordinateIdx by one cell
-		if(currentZoneCell != null && currentZoneCell.isObstruction() && lastPlowableZoneCellIdx != null){
+		if(currentZoneCell != null && isCurrentCellObstructed && lastPlowableZoneCellIdx != null){
 			lastPlowableZoneCellIdx = findNextZoneCell(currentZoneCellIdx, (direction * -1));
 		}
 		
