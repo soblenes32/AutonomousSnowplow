@@ -27,23 +27,23 @@ public class SnowVolumeSimulationService{
 	 ***************************************************************************************/
 	public Set<ZoneCell> updateSnowVolume(){
 		VehicleState vs = worldState.getVehicleState();
-		boolean isZoneCellModified = false;
 		Set<ZoneCell> modifiedZoneCellSet = new HashSet<>();
 		
-		//Short circuit if this if the vehicle initialization
-		if(vs.getLastPositionMeasurement() == null) 
+		//Short circuit if the vehicle initialization is not complete
+		if(vs.getLastPositionMeasurement() == null) {
 			return modifiedZoneCellSet;
+		}
 		
 		Point positionZoneCellIdx = VehicleInstructionService.positionToZoneCellIdx(vs.getPosition());
-		Point lastPositionZoneCellIdx = VehicleInstructionService.positionToZoneCellIdx(vs.getLastPositionMeasurement().getPosition());
+		Point lastPositionZoneCellIdx = VehicleInstructionService.positionToZoneCellIdx(vs.getLastPositionMeasurement());
 		
 		//If the vehicle has moved to another zoneCell
 		if(!positionZoneCellIdx.equals(lastPositionZoneCellIdx)){
 			//Determine the direction of motion
 			Point vehicleZoneCellIdx = VehicleInstructionService.positionToZoneCellIdx(vs.getPosition());
-			Point lastZoneCellIdx = VehicleInstructionService.positionToZoneCellIdx(vs.getLastPositionMeasurement().getPosition());
-			int xOffset = lastZoneCellIdx.x - vehicleZoneCellIdx.x;
-			int yOffset = lastZoneCellIdx.y - vehicleZoneCellIdx.y;
+			Point lastZoneCellIdx = VehicleInstructionService.positionToZoneCellIdx(vs.getLastPositionMeasurement());
+			int xOffset = vehicleZoneCellIdx.x - lastZoneCellIdx.x;
+			int yOffset = vehicleZoneCellIdx.y - lastZoneCellIdx.y;
 			//confine motion to range [1, 0, -1] in each dimension
 			xOffset = (xOffset > 1)?1:
 				(xOffset < -1)?-1:xOffset;
@@ -59,9 +59,12 @@ public class SnowVolumeSimulationService{
 			for(Point zoneCellIdx: zoneCellsUnderVehicleList) {
 				ZoneCell searchCell = worldState.getZoneCellMap().get(zoneCellIdx);
 				if(searchCell != null && searchCell.getSnowVolume() > 0){
-					isZoneCellModified = true;
 					moveSnow(zoneCellIdx, xOffset, yOffset, modifiedZoneCellSet);
 				}
+			}
+		}else {
+			if(vs.getMotorATarget() != 0 || vs.getMotorBTarget() != 0) {
+				System.out.println("Current position: " + positionZoneCellIdx + ", last position: " + lastPositionZoneCellIdx);
 			}
 		}
 		return modifiedZoneCellSet;

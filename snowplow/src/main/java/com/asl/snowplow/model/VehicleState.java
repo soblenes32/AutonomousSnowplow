@@ -3,6 +3,7 @@ package com.asl.snowplow.model;
 import java.awt.Point;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -11,12 +12,24 @@ import org.springframework.stereotype.Service;
 
 import com.asl.snowplow.service.ArduinoRxTxUsbService;
 import com.asl.snowplow.service.MotorDesignator;
+import com.asl.snowplow.service.SnowVolumeSimulationService;
+import com.asl.snowplow.service.TelemetryFilterService;
+import com.asl.snowplow.service.websocket.ZoneCellWebsocketService;
 
 @Service
 public class VehicleState {
 	
 	@Inject
 	ArduinoRxTxUsbService rxTxUsbService;
+	
+	@Inject
+	TelemetryFilterService telemetryFilterService;
+	
+	@Inject
+	SnowVolumeSimulationService snowVolumeSimulationService;
+	
+	@Inject
+	ZoneCellWebsocketService zoneCellWebsocketService;
 	
 	//Instructions sent to arduino reflect targets
 	private float motorATarget = 0;
@@ -25,6 +38,10 @@ public class VehicleState {
 	private float motorAValue = 0;
 	private float motorBValue = 0;
 	
+	
+	private static final int SNOW_VOL_KEYFRAME = 40;
+	private int snowVolFramesSinceKeyframe = 0;
+	
 	private VehicleOperationMode vehicleOperationMode = VehicleOperationMode.COMMAND_QUEUE;
 	
 	//Current canonical location of the vehicle in the coordinate system
@@ -32,17 +49,12 @@ public class VehicleState {
 	//To convert cellZoneIdx to CellZone, see: worldState.zoneCellMap
 	private Point position = new Point();
 	
-	//Number of invalid readouts in a row
-	private int sequentialInvalidPositionCount = 0;
-	//Number of invalid readouts before the position "snaps" to the latest readout
-	private int maxSequentialInvalidPositionCount = 20;
-	
-	private long validReadCount = 0;
-	private long invalidReadCount = 0;
 	
 	//Map of the last n vehicle positions
 	private static final int MAX_HISTORICAL_POSITIONS = 4;
-	private Map<Long, PositionMeasurement> historicalPositionMap = new HashMap<>();
+
+	private Map<Long, Point> historicalPositionMap = new HashMap<>();
+	private Map<Long, PositionMeasurement> historicalSensorReadingMap = new HashMap<>();
 	
 	//Radius of the vehicle measured in decimeters/10cm
 	private int obstructionSearchRadius = 2;
@@ -64,52 +76,88 @@ public class VehicleState {
 	 **********************************************************************/
 	public void updatePosition(PositionMeasurement p) {
 		
-		if(!isPositionValid(p)) return;
+		//if(!telemetryFilterService.isPositionOutlier(p)) return;
 		
 		//Remove oldest historical position if exists
 		if(historicalPositionMap.containsKey(telemetrySerialPacketSequence - MAX_HISTORICAL_POSITIONS)) {
 			historicalPositionMap.remove(telemetrySerialPacketSequence - MAX_HISTORICAL_POSITIONS);
 		}
-		
-		//Add the new telemetry position
-		historicalPositionMap.put(telemetrySerialPacketSequence, p);
-		//Update the canonical position as the average of MAX_HISTORICAL_POSITIONS
-		double x = historicalPositionMap.values().stream().mapToDouble(i->i.getPosition().getX()).average().getAsDouble();
-		double y = historicalPositionMap.values().stream().mapToDouble(i->i.getPosition().getY()).average().getAsDouble();
-		
-		if(this.telemetrySerialPacketSequence % 60 == 0) {
-			System.out.println("Valid read count: "+validReadCount+", invalid: " + invalidReadCount);
+		if(historicalSensorReadingMap.containsKey(telemetrySerialPacketSequence - MAX_HISTORICAL_POSITIONS)) {
+			historicalSensorReadingMap.remove(telemetrySerialPacketSequence - MAX_HISTORICAL_POSITIONS);
 		}
 		
+		//Add the new telemetry position
+		historicalSensorReadingMap.put(telemetrySerialPacketSequence, p);
+		
+		
+		/******* Low-pass filter *******/
+		//Update the canonical position as the average of MAX_HISTORICAL_POSITIONS
+		double x = historicalSensorReadingMap.values().stream().mapToDouble(i->i.getPosition().getX()).average().getAsDouble();
+		double y = historicalSensorReadingMap.values().stream().mapToDouble(i->i.getPosition().getY()).average().getAsDouble();
+		historicalPositionMap.put(telemetrySerialPacketSequence, new Point((int)x,(int)y));
 		position.setLocation(x, y);
+		
+		/******* Thresholding limit *******/
+		//Reduce frame-to-frame movement to max of 1cm
+		//Point filteredPosition = telemetryFilterService.translateToValidPosition(p);
+		//position.setLocation(filteredPosition);
+		//historicalPositionMap.put(telemetrySerialPacketSequence, new Point(filteredPosition));
+		
+		/******* Raw *******/
+		//position.setLocation(p.getPosition());
+		//historicalPositionMap.put(telemetrySerialPacketSequence, new Point(p.getPosition()));
+		
+		
+		
+		
+		
+		/******** Snowvolume simulation service *********/
+		//Update the internal snow volume simulation before making any decisions
+		//Send the modified zonecells tSet<E>he client if any changes were made
+		Set<ZoneCell> modifiedZoneCellSet = snowVolumeSimulationService.updateSnowVolume();
+		if(modifiedZoneCellSet.size() > 0) {
+			snowVolFramesSinceKeyframe++;
+			if(snowVolFramesSinceKeyframe > SNOW_VOL_KEYFRAME) { //Send a keyframe every so ofter to update the whole field
+				System.out.println("Sending complete snowvolume update");
+				zoneCellWebsocketService.sendZoneCellUpdate();
+				snowVolFramesSinceKeyframe = 0;
+			}else {
+				System.out.println("Sending snowvolume cell updates: " + modifiedZoneCellSet.size());
+				zoneCellWebsocketService.sendZoneCellUpdate(modifiedZoneCellSet);
+			}
+		}
+		
+		
+		
+		
 		//Increment the telemetry sequence
 		this.telemetrySerialPacketSequence++;
 	}
 	
-	public boolean isPositionValid(PositionMeasurement p) {
-		boolean isValid = true;
-		PositionMeasurement last = getLastPositionMeasurement();
-		double distance = 0;
-		if(last != null) {
-			distance = last.getPosition().distance(p.getPosition());
-		}
-		//Has the vehicle moved more than 4 cm since the last reading?
-		if(distance > 400) isValid = false;
-		
-		if(!isValid) {
-			sequentialInvalidPositionCount++;
-			invalidReadCount++;
-			if(sequentialInvalidPositionCount > maxSequentialInvalidPositionCount) {
-				sequentialInvalidPositionCount = 0;
-				isValid = true;
-				historicalPositionMap.clear();
-			}
-		}else {
-			sequentialInvalidPositionCount = 0;
-			validReadCount++;
-		}
-		return isValid;
-	}
+//	public boolean isPositionValid(PositionMeasurement p) {
+//		boolean isValid = true;
+//		PositionMeasurement last = getLastPositionMeasurement();
+//		double distance = 0;
+//		if(last != null) {
+//			distance = last.getPosition().distance(p.getPosition());
+//		}
+//		//Has the vehicle moved more than 4 cm since the last reading?
+//		if(distance > 400) isValid = false;
+//		
+//		if(!isValid) {
+//			sequentialInvalidPositionCount++;
+//			invalidReadCount++;
+//			if(sequentialInvalidPositionCount > maxSequentialInvalidPositionCount) {
+//				sequentialInvalidPositionCount = 0;
+//				isValid = true;
+//				historicalPositionMap.clear();
+//			}
+//		}else {
+//			sequentialInvalidPositionCount = 0;
+//			validReadCount++;
+//		}
+//		return isValid;
+//	}
 	
 	public float getMotorATarget() {
 		return motorATarget;
@@ -179,7 +227,22 @@ public class VehicleState {
 	public void setTelemetrySerialPacketSequence(long telemetrySerialPacketSequence) {
 		this.telemetrySerialPacketSequence = telemetrySerialPacketSequence;
 	}
-	public PositionMeasurement getLastPositionMeasurement() {
+	public Point getLastPositionMeasurement() {
 		return historicalPositionMap.get(telemetrySerialPacketSequence-1);
+	}
+	public Map<Long, Point> getHistoricalPositionMap() {
+		return historicalPositionMap;
+	}
+	public void setHistoricalPositionMap(Map<Long, Point> historicalPositionMap) {
+		this.historicalPositionMap = historicalPositionMap;
+	}
+	public Map<Long, PositionMeasurement> getHistoricalSensorReadingMap() {
+		return historicalSensorReadingMap;
+	}
+	public void setHistoricalSensorReadingMap(Map<Long, PositionMeasurement> historicalSensorReadingMap) {
+		this.historicalSensorReadingMap = historicalSensorReadingMap;
+	}
+	public PositionMeasurement getLastSensorReadingt() {
+		return historicalSensorReadingMap.get(telemetrySerialPacketSequence-1);
 	}
 }

@@ -340,13 +340,10 @@ angular.module("SnowplowApp")
 			 * activity
 			 * [waypoint, stop, plowzone, plowedsnowzone, parkzone, addobstruction, removeobstruction, moveanchors]
 			 ***********************************************************************************************************************/
-			scope.$watch('zoneCellDataModelService', function(newValue, oldValue, scope) {
+			scope.$watchGroup(['zoneCellDataModelService', 'zoneCellDataModelService.zoneCellArr', 'zoneCellDataModelService.zoneCellUpdateSequence'], function(newValue, oldValue, scope) {
 				//Short-circuit if anchor or vehicle data is not yet available
-				if(!scope.anchorArr || !scope.vehiclePositionArr || !scope.activity || scope.vehiclePositionArr.length == 0 || !scope.zoneCellDataModelService.zoneCellArr || !x || !y) return;
-
+				if(!scope.anchorArr || !scope.vehiclePositionArr || scope.vehiclePositionArr.length == 0 || !scope.zoneCellDataModelService.zoneCellArr || !x || !y) return;
 				renderZoneCells();
-				//container.selectAll(".zone-cell-rect").exit().remove();
-				
 			}, true); //$watchGroup
 			
 			function renderZoneCells(){

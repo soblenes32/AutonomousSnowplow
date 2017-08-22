@@ -32,14 +32,17 @@ angular.module("SnowplowApp")
 			});
 			stompClient.subscribe('/toclient/zones/update', function (payload) {
 				$rootScope.$apply(function(){
+					//console.log("received updated zonecell data.");
+					//console.dir(angular.fromJson(payload.body));
 					zoneCellDataModelService.updateZoneCells(angular.fromJson(payload.body));
 		        });
 			});
-			stompClient.subscribe('/toclient/zones/delta', function (payload) {
-				$rootScope.$apply(function(){
-					zoneCellDataModelService.updateZoneCellDelta(angular.fromJson(payload.body));
-		        });
-			});
+//			stompClient.subscribe('/toclient/zones/delta', function (payload) {
+//				$rootScope.$apply(function(){
+//					console.log("received delta.");
+//					zoneCellDataModelService.updateZoneCellDelta(angular.fromJson(payload.body));
+//		        });
+//			});
 		});
 	}
 	

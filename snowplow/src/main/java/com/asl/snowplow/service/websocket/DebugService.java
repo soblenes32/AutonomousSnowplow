@@ -1,4 +1,4 @@
-package com.asl.snowlplow.service.websocket;
+package com.asl.snowplow.service.websocket;
 
 //@Service
 public class DebugService {

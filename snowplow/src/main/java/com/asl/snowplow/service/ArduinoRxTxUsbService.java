@@ -75,24 +75,21 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 		// the next line is for Raspberry Pi and 
         // gets us into the while loop and was suggested here was suggested http://www.raspberrypi.org/phpBB3/viewtopic.php?f=81&t=32186
 		
-		CommPortIdentifier portId = null;
-		@SuppressWarnings("rawtypes")
-		Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
-		
-		//First, Find an instance of serial port as set in PORT_NAMES.
-		while (portEnum.hasMoreElements()) {
-			CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
-			if (currPortId.getName().equals(PORT_NAME)) {
-				portId = currPortId;
-				break;
-			}
-		}
-		if (portId == null) {
-			System.out.println("Could not find COM port.");
-			return;
-		}
-		
+//		CommPortIdentifier portId = null;
+//		@SuppressWarnings("rawtypes")
+//		Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
+//		
+//		//First, Find an instance of serial port as set in PORT_NAMES.
+//		while (portEnum.hasMoreElements()) {
+//			CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
+//			if (currPortId.getName().equals(PORT_NAME)) {
+//				portId = currPortId;
+//				break;
+//			}
+//		}
 		try {
+			CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(PORT_NAME);
+
 			// open serial port, and use class name for the appName.
 			serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT);
 		

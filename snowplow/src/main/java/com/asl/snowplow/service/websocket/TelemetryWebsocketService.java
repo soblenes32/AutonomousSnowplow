@@ -31,11 +31,12 @@ public class TelemetryWebsocketService {
 		}
 	}
 	
-	public synchronized void sendZoneCellList() {
-		synchronized(messagingTemplate) {
-			messagingTemplate.convertAndSend("/toclient/telemetry/zones", worldState.getZoneCellMap().values());
-		}
-	}
+	//Replaced with ZoneCellWebsocketService.sendZoneCellUpdate()
+//	public synchronized void sendZoneCellList() {
+//		synchronized(messagingTemplate) {
+//			messagingTemplate.convertAndSend("/toclient/telemetry/zones", worldState.getZoneCellMap().values());
+//		}
+//	}
 	
 	public synchronized void sendLidarDetectionList(List<Point> lidarPointList) {
 		synchronized(messagingTemplate) {

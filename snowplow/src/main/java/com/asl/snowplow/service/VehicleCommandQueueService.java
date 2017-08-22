@@ -1,6 +1,7 @@
 package com.asl.snowplow.service;
 
 import java.awt.Point;
+import java.util.Date;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
@@ -35,17 +36,10 @@ public class VehicleCommandQueueService {
 	VehicleCommandWebsocketService vehicleCommandWebsocketService;
 	
 	@Inject
-	SnowVolumeSimulationService snowVolumeSimulationService;
-	
-	@Inject
-	ZoneCellWebsocketService zoneCellWebsocketService;
-	
-	@Inject
 	WorldState worldState;
 	
 	private int nextCommandId = 0;
 	private Queue<VehicleCommand> vehicleCommandQueue = new ConcurrentLinkedQueue<>();
-	
 	
 	/************************************************************************************
 	 * Adds the supplied command to the queue, and updates the reference with an ID.
@@ -97,12 +91,6 @@ public class VehicleCommandQueueService {
 		VehicleCommand command = vehicleCommandQueue.peek();
 		VehicleState vehicleState = worldState.getVehicleState();
 		
-		//Update the internal snow volume simulation before making any decisions
-		//Send the modified zonecells tSet<E>he client if any changes were made
-		Set<ZoneCell> modifiedZoneCellSet = snowVolumeSimulationService.updateSnowVolume();
-		if(modifiedZoneCellSet.size() > 0) {
-			zoneCellWebsocketService.sendZoneCellUpdate(modifiedZoneCellSet);
-		}
 		
 		//If the mode is paused, do not process the command queue
 		if(vehicleState.getVehicleOperationMode() == VehicleOperationMode.PAUSED){
@@ -124,13 +112,13 @@ public class VehicleCommandQueueService {
 				return;
 			}
 		}
-		
+		boolean isDone = false;
 		String[] args = command.getArgs();
 		switch(command.getVehicleCommandType()){
 			case MOVE_TO :
 				if(args.length == 2){
 					Point p = new Point((int) Float.parseFloat(args[0]), (int) Float.parseFloat(args[1]));
-					boolean isDone = vehicleInstructionService.moveDirectlyToCoordinate(p);
+					isDone = vehicleInstructionService.moveDirectlyToCoordinate(p);
 					if(isDone){
 						vehicleCommandQueue.poll();
 						vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
@@ -140,6 +128,14 @@ public class VehicleCommandQueueService {
 			case STOP:
 				vehicleInstructionService.stop();
 				vehicleCommandQueue.poll();
+				vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
+			break;
+			case STOP_UNTIL:
+				vehicleInstructionService.stop();
+				isDone = (new Date().after(new Date(Long.parseLong(args[0]))));
+				if(isDone) {
+					vehicleCommandQueue.poll();
+				}
 				vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
 			break;
 			case NAV_TO:

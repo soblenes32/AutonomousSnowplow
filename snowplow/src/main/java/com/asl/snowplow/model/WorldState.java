@@ -42,11 +42,11 @@ public class WorldState {
 	 * Saves the lidar scan detections to each zoneCell index. Cleans out old
 	 * lidar scans. Identifies new obstructions as a result of the latest scan
 	 * 
-	 * @return true if any new obstructions were detected on this scan. false 
+	 * @return set of any new obstructions were detected on this scan. false 
 	 * otherwise
 	 *****************************************************************************/
-	public boolean registerLidarScans(List<Point> lpList, long scanNumber) {
-		boolean foundNewObstructions = false;
+	public Set<ZoneCell> registerLidarScans(List<Point> lpList, long scanNumber) {
+		Set<ZoneCell> foundNewObstructions = new HashSet<>();
 		for(Point lp: lpList) {
 			//Add the scanNumber to lidarDetectionMap for the new detections
 			Point lpZoneCellIdx = VehicleInstructionService.positionToZoneCellIdx(lp);
@@ -59,8 +59,8 @@ public class WorldState {
 		}
 		
 		//debug
-		long numberZoneCellsWithDetections = lidarDetectionMap.values().stream().max((p1, p2) -> Long.compare( p1.size(), p2.size())).get().size();
-		System.out.println("Max detections out of 60: " + numberZoneCellsWithDetections);
+		//long numberZoneCellsWithDetections = lidarDetectionMap.values().stream().max((p1, p2) -> Long.compare( p1.size(), p2.size())).get().size();
+		//System.out.println("Max detections out of 60: " + numberZoneCellsWithDetections); //23 to 33
 		
 		//Clean up all the detection scan numbers that are too old
 		long outOfRangeScanNumber = (long) (scanNumber - SCAN_RETENTION_WINDOW);
@@ -82,10 +82,10 @@ public class WorldState {
 				}
 				
 				if(!zc.isObstruction()) {
-					System.out.println("ZC obstruction detected: " + zc.getCoordinates());
+					//System.out.println("ZC obstruction detected: " + zc.getCoordinates());
 					zc.setObstruction(true);
 					zc.setDynamicObstruction(true);
-					foundNewObstructions = true;
+					foundNewObstructions.add(zc);
 				}
 			}
 		}

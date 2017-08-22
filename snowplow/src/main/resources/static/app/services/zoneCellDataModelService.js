@@ -17,12 +17,15 @@ angular.module("SnowplowApp")
 
 	this.zoneCellArr = [];
 	this.zoneCellMap = {};
+	this.zoneCellUpdateSequence = 0;
 	
-	this.updateZoneCells = function(zoneCellArr){
-		self.zoneCellArr = zoneCellArr;
-		self.zoneCellArr.forEach(function(zoneCell){
-			self.zoneCellMap[self.generateKey(zoneCell)] = zoneCell;
+	this.updateZoneCells = function(updateZoneCellArr){
+		console.log("Updating zone cells: " + updateZoneCellArr.length);
+		updateZoneCellArr.forEach(function(zoneCell){
+			self.zoneCellMap[self.generateKeyFromZoneCell(zoneCell)] = zoneCell;
 		});
+		self.zoneCellArr = Object.values(self.zoneCellMap);
+		self.zoneCellUpdateSequence++;
 	};
 	
 	/**************************************************
@@ -124,8 +127,8 @@ angular.module("SnowplowApp")
 		return self.zoneCellMap[self.generateKey(x,y)];
 	}
 	
-	this.generateKey = function(zoneCell){
-		return self.generateKey(zoneCell.position.x, zoneCell.position.y);
+	this.generateKeyFromZoneCell = function(zoneCell){
+		return self.generateKey(zoneCell.coordinates.x, zoneCell.coordinates.y);
 	}
 	
 	this.generateKey = function(x, y){
