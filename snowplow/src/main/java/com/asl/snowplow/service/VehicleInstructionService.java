@@ -28,6 +28,7 @@ public class VehicleInstructionService {
 	
 	/************************************************************************************************************
 	 * Decision policy for moveDirectlyToCoordinate
+	 * Point p is the coordinate to move to
 	 * 
 	 * Absolute angle to destination
 	 * < 15 degrees: move forward on with left/right track offset speed to turn toward target

@@ -2,6 +2,8 @@ package com.asl.snowplow.service;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +39,7 @@ public class AutoPlowMotionPlanningService{
 		List<PlowVector> plowVectorList = listAllPlowVectors();
 		
 		if(plowVectorList.size() > 0){
+			//PLOWING
 			//Find the origin closest to the current vehiclePosition
 			
 			double minDistance = 9999999;
@@ -48,25 +51,50 @@ public class AutoPlowMotionPlanningService{
 					closestpv = pv;
 				}
 			}
+			//Nav to start of plowvector
 			VehicleCommand navToCommand = new VehicleCommand();
 			navToCommand.setVehicleCommandType(VehicleCommandType.NAV_TO);
 			String[] args = {Integer.toString((int) closestpv.getSource().getX()), Integer.toString((int) closestpv.getSource().getY())};
 			navToCommand.setArgs(args);
+			//Plow the snow to the end of the plowvector
 			VehicleCommand moveToCommand = new VehicleCommand();
 			moveToCommand.setVehicleCommandType(VehicleCommandType.MOVE_TO);
 			String[] args2 = {Double.toString(closestpv.getDestination().getX()), Double.toString(closestpv.getDestination().getY())};
 			moveToCommand.setArgs(args2);
+			//Reverse a bit 
+			String[] vcArgs = {""+(new Date().getTime()+500)}; //Reverse for 0.5 seconds
+			VehicleCommand reverseCommand = new VehicleCommand();
+			reverseCommand.setVehicleCommandType(VehicleCommandType.REVERSE_UNTIL);
+			reverseCommand.setArgs(vcArgs);
 			
 			vehicleCommandList.add(navToCommand);
 			vehicleCommandList.add(moveToCommand);
-			//TODO reverse?
+			vehicleCommandList.add(reverseCommand);
+			
 		}else{
 			//UNPLOWED SNOWZONES
 			//Calculate diagonal plow options?
 		
 			//PARKING
-			//Is the vehicle parked? Yes? then just... idle or something
-			//Is the vehicle parked? No? then go find a parking zone (TODO)
+			Point parkingSpotIdx = findParkZoneCentroidIdx(); 
+			Point parkingSpotPosition = VehicleInstructionService.zoneCellIdxToPosition(parkingSpotIdx);
+			System.out.println("My parking spot idx is: " + parkingSpotPosition); 
+			if(worldState.getVehicleState().getPosition().distance(parkingSpotPosition) < 250){ 
+				System.out.println("Arrived at parking spot. Halting for 30 seconds."); 
+				VehicleCommand vc = new VehicleCommand(VehicleCommandType.STOP_UNTIL); 
+				Calendar calendar = Calendar.getInstance(); 
+				calendar.add(Calendar.SECOND, 30); 
+				String[] args = {""+calendar.getTime().getTime()};
+				vc.setArgs(args); 
+				vehicleCommandList.add(vc);
+			} else {
+				System.out.println("Navigating to destination");
+				VehicleCommand vc = new VehicleCommand(VehicleCommandType.NAV_TO);
+				String[] args = {""+parkingSpotPosition.getX(), ""+parkingSpotPosition.getY()};
+				vc.setArgs(args);
+				vehicleCommandList.add(vc);
+			}
+			
 		}
 		return vehicleCommandList;
 	}
@@ -189,4 +217,33 @@ public class AutoPlowMotionPlanningService{
 		currentZoneCellIdx = findNextZoneCell(currentZoneCellIdx, direction);
 		return findPlowVectorSource(currentZoneCellIdx, plowedSnowZoneOriginIdx, direction);
 	}
+	
+	/**********************************************************************************
+	* Finds the center coordinate index of the designated parkzone. If no parkzones
+	* have been designated, then returns null
+	**********************************************************************************/
+	public Point findParkZoneCentroidIdx(){ 
+	    //Build a list that just contains the valid, unobstructed parkzonecells 
+	    ZoneCell bestCandidate = null; 
+	    double bestCandidateMeanDistance = 9999999; 
+	    List<ZoneCell> validParkZoneCellList = new ArrayList<>(); 
+	    for(ZoneCell zc: worldState.getZoneCellMap().values()){ 
+	        //is it a parkzone? Is it obstructed? 
+	        if(zc.isParkZone() && !vehicleInstructionService.isZoneCellObstructed(zc.getCoordinates(), worldState.getVehicleState().getObstructionSearchRadius())){ 
+	            validParkZoneCellList.add(zc); 
+	        } 
+	    } 
+	    //Next find the centroid 
+	    for(ZoneCell pz: validParkZoneCellList){ 
+	        double candidateMeanDistance = validParkZoneCellList.stream()
+	        		.mapToDouble((zc)->pz.getCoordinates().distance(zc.getCoordinates()))
+	        		.average()
+	        		.getAsDouble();
+	        if(candidateMeanDistance < bestCandidateMeanDistance){
+	            bestCandidate = pz; 
+	            bestCandidateMeanDistance = candidateMeanDistance; 
+	        } 
+	    } 
+	    return (bestCandidate != null)?bestCandidate.getCoordinates():null; 
+	} 
 }

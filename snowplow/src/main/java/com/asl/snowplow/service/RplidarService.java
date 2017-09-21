@@ -54,9 +54,6 @@ public class RplidarService{
 	private static final int IMMINENT_TRAVERSAL_ZONE_FORWARD_MM = 450; //40 cm = 4 decimeter
 	private static final int IMMINENT_TRAVERSAL_ZONE_SIDE_MM = 100;
 	
-	private int countSinceLastUIKeyframe = 0;
-	private static final int LIDAR_KEYFRAME_FREQ = 60; 
-	
 	@PostConstruct
 	private void init(){
 		System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/arduino" + File.pathSeparator + "/dev/rplidar");
@@ -103,6 +100,12 @@ public class RplidarService{
 					
 					vehicleCommandQueueService.purgeAllCommands();
 					vehicleCommandQueueService.issueCommand(vehicleCommand);
+					
+					String[] vcRArgs = {""+(new Date().getTime()+500)}; //Reverse for 0.5 seconds
+					VehicleCommand reverseCommand = new VehicleCommand();
+					reverseCommand.setVehicleCommandType(VehicleCommandType.REVERSE_UNTIL);
+					reverseCommand.setArgs(vcRArgs);
+					vehicleCommandQueueService.issueCommand(reverseCommand);
 				}
 				
 				//Send the lidar detection to the UI

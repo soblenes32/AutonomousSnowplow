@@ -11,3 +11,16 @@ sudo cp /usr/lib/jni/librxtxSerial.so /usr/lib
 sudo cp /usr/lib/jni/librxtxParallel.so /usr/lib
 Properties locations
 /usr/java/packages/lib/arm:/lib:/usr/lib
+
+
+
+
+
+
+
+
+
+
+
+
+snow should appear clearly in UI on plowed snow zones

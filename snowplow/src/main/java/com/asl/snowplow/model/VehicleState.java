@@ -39,7 +39,7 @@ public class VehicleState {
 	private float motorBValue = 0;
 	
 	
-	private static final int SNOW_VOL_KEYFRAME = 40;
+	private static final int SNOW_VOL_KEYFRAME = 400000;
 	private int snowVolFramesSinceKeyframe = 0;
 	
 	private VehicleOperationMode vehicleOperationMode = VehicleOperationMode.COMMAND_QUEUE;

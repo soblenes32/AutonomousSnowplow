@@ -138,8 +138,18 @@ public class VehicleCommandQueueService {
 				}
 				vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
 			break;
+			case REVERSE_UNTIL:
+				worldState.getVehicleState().setMotorATarget(-100);
+				worldState.getVehicleState().setMotorBTarget(-100);
+				isDone = (new Date().after(new Date(Long.parseLong(args[0]))));
+				if(isDone) {
+					vehicleCommandQueue.poll();
+					vehicleInstructionService.stop();
+				}
+				vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
+			break;
 			case NAV_TO:
-				Point position = new Point(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+				Point position = new Point((int) Float.parseFloat(args[0]), (int) Float.parseFloat(args[1]));
 				List<Point> waypointList = vehicleInstructionService.findPath(vehicleState.getPosition(), position, vehicleState.getObstructionSearchRadius(), false);
 				vehicleCommandQueue.poll(); //Remove the NAV_TO command
 				Queue<VehicleCommand> bufferQueue = new ConcurrentLinkedQueue<>();
