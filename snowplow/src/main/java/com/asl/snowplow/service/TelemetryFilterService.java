@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.asl.snowplow.model.PositionMeasurement;
@@ -30,13 +31,16 @@ public class TelemetryFilterService{
 	//If a new point is farther than threshold distance, then it is considered an outlier
 	private static final int OUTLIER_THRESHOLD_MM = 400; 
 	
+	@Value("${snowplow.config.pozyxpositionspath}")
+	String pozyxPositionFilePath;
+	
 	private long validReadCount = 0;
 	private long invalidReadCount = 0;
 	
 	@PostConstruct
 	private void init(){
 		try{
-			fw = new FileWriter("/home/pi/snowplow/positions.txt", true);
+			fw = new FileWriter(pozyxPositionFilePath, true);
 			bw = new BufferedWriter(fw);
 		}catch (IOException e){
 			e.printStackTrace();
@@ -56,6 +60,7 @@ public class TelemetryFilterService{
 	 * Writes the raw and processed telemetry data to system file for analysis
 	 *********************************************************************************/
 	private void logTelemetryData(PositionMeasurement p) {
+		if(fw == null) return;
 		//TODO
 //		if(this.telemetrySerialPacketSequence % 60 == 0) {
 //			System.out.println("Outlier telemetry readings removed: "+invalidReadCount+", readings read: " + validReadCount);

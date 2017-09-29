@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.asl.snowplow.model.WorldState;
@@ -28,6 +29,9 @@ public class ZoneCellPresetService {
 	@Inject
 	ZoneCellWebsocketService zoneCellWebsocketService;
 	
+	@Value("${snowplow.config.zonecellpresetfile}")
+	String zoneCellPresetFile;
+	
 	private static final String PRESET_LOCAL_DIRECTORY = "/home/pi/snowplow/zonecellpresets";
 	
 	@PostConstruct
@@ -35,6 +39,11 @@ public class ZoneCellPresetService {
 		//Create the preset local directory if it doesn't exist
 		File file = new File(PRESET_LOCAL_DIRECTORY);
 		file.mkdirs();
+		
+		//Load the initial zone cell preset file if available
+		if(zoneCellPresetFile != null) {
+			loadPresetFromFile(zoneCellPresetFile);
+		}
 	}
 	
 	public List<String> listPresets(){

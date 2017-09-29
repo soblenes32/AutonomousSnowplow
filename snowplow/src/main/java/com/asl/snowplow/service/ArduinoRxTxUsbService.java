@@ -13,6 +13,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.asl.snowplow.model.AnchorState;
@@ -20,6 +21,8 @@ import com.asl.snowplow.model.PositionMeasurement;
 import com.asl.snowplow.model.VehicleState;
 import com.asl.snowplow.model.WorldState;
 import com.asl.snowplow.service.websocket.TelemetryWebsocketService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
@@ -34,6 +37,14 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 	@Inject
 	TelemetryWebsocketService telemetryWebsocketService;
 	
+	@Value("${snowplow.config.anchorpresetpath}")
+	String anchorPresetFile;
+	
+	@Value("${snowplow.config.defaultheading}")
+	int defaultCalibrationHeading;
+	
+	
+	
 	SerialPort serialPort 					= null;
 	private BufferedReader input 			= null;
 	private OutputStream output 			= null;
@@ -41,6 +52,11 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 	private static final int DATA_RATE 		= 9600;
 	private static final String PORT_NAME 	= "/dev/arduino";
 	private static final String LINEBREAK_TERMINATOR = "\n";
+	
+	//When set to true, upon the next heading reading, the offset will be set such that
+	//the current adjusted heading is equal to the snowplow.config.defaultheading
+	private boolean isReadyToCalibrateInitialHeading = false;
+	
 	
 	@PostConstruct
 	private void init(){
@@ -50,8 +66,13 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 		//Initialize polling cycle
 		pollTelemetry(100);
 		
-		//Fetch anchor locations
-		getAnchors();
+		//Fetch anchor locations from the config file if available
+		if(!setAnchorsFromConfig()) {
+			//Otherwise, just auto-set the anchor configurations
+			getAnchors();
+		}
+		
+		isReadyToCalibrateInitialHeading = true;
 	}
 	
 	@PreDestroy
@@ -70,21 +91,6 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 	 * Establish a connection to the local raspi USB port
 	 ***********************************************************************/
 	public void connectToDevice(){
-		// the next line is for Raspberry Pi and 
-        // gets us into the while loop and was suggested here was suggested http://www.raspberrypi.org/phpBB3/viewtopic.php?f=81&t=32186
-		
-//		CommPortIdentifier portId = null;
-//		@SuppressWarnings("rawtypes")
-//		Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
-//		
-//		//First, Find an instance of serial port as set in PORT_NAMES.
-//		while (portEnum.hasMoreElements()) {
-//			CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
-//			if (currPortId.getName().equals(PORT_NAME)) {
-//				portId = currPortId;
-//				break;
-//			}
-//		}
 		try {
 			CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(PORT_NAME);
 
@@ -133,13 +139,23 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 					telemetryWebsocketService.sendVehicleState();
 				}else if(cellArr[0].equals("T")){ //Parse telemetry. Expected form: [T,X,Y,Z,YAW,PITCH,ROLL,ERRX,ERRY,ERRZ,ERRXY,ERRXZ,ERRYZ]
 					PositionMeasurement pm = new PositionMeasurement();
-					
 					pm.getPosition().setLocation((int) Double.parseDouble(cellArr[1]), (int) Double.parseDouble(cellArr[2]));
 					pm.setErrorX(Float.parseFloat(cellArr[7]));
 					pm.setErrorY(Float.parseFloat(cellArr[8]));
 					pm.setErrorXY(Float.parseFloat(cellArr[10]));
 					vs.updatePosition(pm);
 					vs.setOrientation(new Vector3D(Double.parseDouble(cellArr[6]), Double.parseDouble(cellArr[5]), Double.parseDouble(cellArr[4])));
+					
+					//Initialize the heading to the default value
+					if(isReadyToCalibrateInitialHeading) {
+						isReadyToCalibrateInitialHeading = false;
+						double headingCalibration = defaultCalibrationHeading - vs.getOrientation().getZ();
+						//Normalize to 180 to -180 range
+						while(headingCalibration > 180) { headingCalibration -= 180; }
+						while(headingCalibration < -180) { headingCalibration += 180; }
+						vs.setHeadingCalibration(headingCalibration);
+					}
+					
 					telemetryWebsocketService.sendVehicleState();
 				}else if(cellArr[0].equals("A")){
 					int anchorCount = (cellArr.length - 1) / 4;
@@ -170,6 +186,13 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 		if(serialPort == null){
 			connectToDevice();
 		}
+		
+		//Just return if the serialPort could not be opened
+		if(serialPort == null) {
+			System.err.println("Unable to access serial port for write of message: " + message);
+			return;
+		}
+		
 		try {
 			output.write(message.getBytes(StandardCharsets.US_ASCII));
 		} catch (IOException e) {
@@ -268,5 +291,33 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 		sb.append(LINEBREAK_TERMINATOR);
 		write(sb.toString());
 		getAnchors();
+	}
+	
+	/****************************************************************
+	 * If an anchor configuration file exists, then it is loaded
+	 * and the anchors are set according to the configuration file.
+	 * Returns true.
+	 * 
+	 * If the anchor configuration file does not exist, then no
+	 * anchor positions are set and returns false.
+	 ****************************************************************/
+	public boolean setAnchorsFromConfig(){
+		List<AnchorState> anchorStateList = null;
+	
+		//Determine if config file exists
+		File f = new File(anchorPresetFile);
+		if(!f.exists()) return false;
+		
+		//Load the configFile
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			anchorStateList = mapper.readValue(f, new TypeReference<List<String>>(){});
+		}catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		setAnchorsManual(anchorStateList);
+		return true;
 	}
 }
