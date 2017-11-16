@@ -57,7 +57,7 @@ public class VehicleState {
 	private Map<Long, PositionMeasurement> historicalSensorReadingMap = new HashMap<>();
 	
 	//Radius of the vehicle measured in decimeters/10cm
-	private int obstructionSearchRadius = 2;
+	private int obstructionSearchRadius = 6;
 	
 	//Radius of the vehicle's plow measured in decimeters/10cm
 	private int plowReachRadius = 1;

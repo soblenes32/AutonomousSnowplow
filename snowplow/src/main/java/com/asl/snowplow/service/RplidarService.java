@@ -51,8 +51,8 @@ public class RplidarService{
 	private int plotMargin = 2000; //The amount of margin in the UI plot
 	private int imminentCollisionDetections = 0; //Running tally of numer of detections in imminent path hitbox
 	private static final int IMMINENT_PATH_DETECTION_THRESHOLD = 1; //If this number of detections is reached in any reading, then trigger safety halt
-	private static final int IMMINENT_TRAVERSAL_ZONE_FORWARD_MM = 450; //40 cm = 4 decimeter
-	private static final int IMMINENT_TRAVERSAL_ZONE_SIDE_MM = 100;
+	private static final int IMMINENT_TRAVERSAL_ZONE_FORWARD_MM = 850; //40 cm = 4 decimeter
+	private static final int IMMINENT_TRAVERSAL_ZONE_SIDE_MM = 600;
 	
 	@PostConstruct
 	private void init(){
