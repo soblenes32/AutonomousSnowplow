@@ -151,6 +151,12 @@ public class RplidarService{
 				sb.append(rAngle).append(",");
 				
 				scanCount++;
+				
+				//Discard any detections on the inside of the wall of the container (ie. < 20cm distant)
+				if(mm[j] < 200) {
+					continue;
+				}
+				
 				//Check for detections in the vehicle's imminent path
 				if(isDetectionInImminentPath(mm[j], (-1 * rAngle))) {
 					System.out.println("collision area detection");
