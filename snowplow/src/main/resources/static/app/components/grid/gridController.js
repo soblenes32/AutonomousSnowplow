@@ -1,5 +1,5 @@
 angular.module("SnowplowApp")
-.controller("GridCtrl", function($scope, $location, $mdSidenav, $mdDialog, $mdToast, telemetryDataModelService, vehicleCommandDataModelService, zoneCellDataModelService, webSocketService, telemetryAjaxService){
+.controller("GridCtrl", function($scope, $location, $mdSidenav, $mdDialog, $mdToast, telemetryDataModelService, vehicleCommandDataModelService, zoneCellDataModelService, updaterService, telemetryAjaxService){
 	$scope.tdms = telemetryDataModelService;
 	$scope.obstructionArr = []; //Dummy hookup for now
 	$scope.vcdms = vehicleCommandDataModelService;
@@ -22,7 +22,7 @@ angular.module("SnowplowApp")
 	 *****************************************************************************/
 	
 	$scope.stopVehicle = function(){
-		webSocketService.purgeVehicleCommands();
+		updaterService.purgeVehicleCommands();
 	};
 	
 	/*****************************************************************************
@@ -71,10 +71,10 @@ angular.module("SnowplowApp")
 		switch ($scope.activity){
 			case 'waypoint': $scope.addWaypoint(argArr); break;
 			case 'moveanchors': $scope.manualCalibrateAnchors(); break;
-			case 'plowzone': webSocketService.sendZoneCellData(argArr); break;
-			case 'plowedsnowzone': webSocketService.sendZoneCellData(argArr); break;
-			case 'parkingzone': webSocketService.sendZoneCellData(argArr); break;
-			case 'addobstruction': webSocketService.sendZoneCellData(argArr); break;
+			case 'plowzone': updaterService.sendZoneCellData(argArr); break;
+			case 'plowedsnowzone': updaterService.sendZoneCellData(argArr); break;
+			case 'parkingzone': updaterService.sendZoneCellData(argArr); break;
+			case 'addobstruction': updaterService.sendZoneCellData(argArr); break;
 		}
 	}
 	
@@ -100,7 +100,7 @@ angular.module("SnowplowApp")
 			vehicleCommandType:'NAV_TO', //'MOVE_TO',
 			args: argArr
 		};
-		webSocketService.issueVehicleCommand(vehicleCommand);
+		updaterService.issueVehicleCommand(vehicleCommand);
 	};
 	
 	/*****************************************************************************

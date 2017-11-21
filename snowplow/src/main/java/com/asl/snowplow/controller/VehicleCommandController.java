@@ -2,8 +2,11 @@ package com.asl.snowplow.controller;
 
 import javax.inject.Inject;
 
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.asl.snowplow.command.VehicleCommand;
 import com.asl.snowplow.command.VehicleOperationCommand;
@@ -16,6 +19,7 @@ import com.asl.snowplow.service.VehicleCommandQueueService;
  *************************************************************************************************************/
 
 @Controller
+@RequestMapping("/vehiclecommand")
 public class VehicleCommandController {
 	@Inject
 	VehicleCommandQueueService vehicleCommandQueueService;
@@ -23,37 +27,76 @@ public class VehicleCommandController {
 	@Inject
 	WorldState worldState;
 	
-	@MessageMapping("/vehiclecommand/issue")
-	public void issueCommand(VehicleCommand vc) throws Exception {
+	
+	@RequestMapping(value = "/issue", method=RequestMethod.POST)
+	public @ResponseBody String issueCommand(@RequestBody VehicleCommand vc) throws Exception {
 		//Prevent issuance of commands if the vehicle is in auto mode
 		if(worldState.getVehicleState().getVehicleOperationMode() != VehicleOperationMode.AUTONOMOUS){
 			vehicleCommandQueueService.issueCommand(vc);
 		}
+		return "";
 	}
 	
-	@MessageMapping("/vehiclecommand/rescend")
-	public void rescendCommand(VehicleCommand vc) throws Exception {
+	@RequestMapping(value = "/rescend", method=RequestMethod.POST)
+	public @ResponseBody String rescendCommand(@RequestBody VehicleCommand vc) throws Exception {
 		//Prevent issuance of commands if the vehicle is in auto mode
 		if(worldState.getVehicleState().getVehicleOperationMode() != VehicleOperationMode.AUTONOMOUS){
 			vehicleCommandQueueService.rescendCommand(vc.getCommandID());
 		}
+		return "";
 	}
 	
-	@MessageMapping("/vehiclecommand/purge")
-	public void purgeCommandQueue() throws Exception {
+	@RequestMapping(value = "/purge", method=RequestMethod.POST)
+	public @ResponseBody String purgeCommandQueue() throws Exception {
 		//Prevent issuance of commands if the vehicle is in auto mode
 		if(worldState.getVehicleState().getVehicleOperationMode() != VehicleOperationMode.AUTONOMOUS){
 			vehicleCommandQueueService.purgeAllCommands();
 		}
+		return "";
 	}
 	
-	@MessageMapping("/vehiclecommand/mode")
-	public void setOperationMode(VehicleOperationCommand vehicleOperationCommand) throws Exception {
+	@RequestMapping(value = "/mode", method=RequestMethod.POST)
+	public @ResponseBody String setOperationMode(@RequestBody VehicleOperationCommand vehicleOperationCommand) throws Exception {
 		//Prevent issuance of commands if the vehicle is in auto mode
 		worldState.getVehicleState().setVehicleOperationMode(vehicleOperationCommand.getVehicleOperationMode());
 		if(vehicleOperationCommand.getVehicleOperationMode() == VehicleOperationMode.PAUSED){
 			worldState.getVehicleState().setMotorATarget(0);
 			worldState.getVehicleState().setMotorBTarget(0);
 		}
+		return "";
 	}
+	
+//	@MessageMapping("/vehiclecommand/issue")
+//	public void issueCommand(VehicleCommand vc) throws Exception {
+//		//Prevent issuance of commands if the vehicle is in auto mode
+//		if(worldState.getVehicleState().getVehicleOperationMode() != VehicleOperationMode.AUTONOMOUS){
+//			vehicleCommandQueueService.issueCommand(vc);
+//		}
+//	}
+//	
+//	@MessageMapping("/vehiclecommand/rescend")
+//	public void rescendCommand(VehicleCommand vc) throws Exception {
+//		//Prevent issuance of commands if the vehicle is in auto mode
+//		if(worldState.getVehicleState().getVehicleOperationMode() != VehicleOperationMode.AUTONOMOUS){
+//			vehicleCommandQueueService.rescendCommand(vc.getCommandID());
+//		}
+//	}
+//	
+//	@MessageMapping("/vehiclecommand/purge")
+//	public void purgeCommandQueue() throws Exception {
+//		//Prevent issuance of commands if the vehicle is in auto mode
+//		if(worldState.getVehicleState().getVehicleOperationMode() != VehicleOperationMode.AUTONOMOUS){
+//			vehicleCommandQueueService.purgeAllCommands();
+//		}
+//	}
+//	
+//	@MessageMapping("/vehiclecommand/mode")
+//	public void setOperationMode(VehicleOperationCommand vehicleOperationCommand) throws Exception {
+//		//Prevent issuance of commands if the vehicle is in auto mode
+//		worldState.getVehicleState().setVehicleOperationMode(vehicleOperationCommand.getVehicleOperationMode());
+//		if(vehicleOperationCommand.getVehicleOperationMode() == VehicleOperationMode.PAUSED){
+//			worldState.getVehicleState().setMotorATarget(0);
+//			worldState.getVehicleState().setMotorBTarget(0);
+//		}
+//	}
 }

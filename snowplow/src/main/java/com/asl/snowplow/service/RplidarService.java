@@ -22,19 +22,20 @@ import com.asl.snowplow.model.WorldState;
 import com.asl.snowplow.model.ZoneCell;
 import com.asl.snowplow.rplidar.RpLidarHighLevelDriver;
 import com.asl.snowplow.rplidar.RpLidarScan;
-import com.asl.snowplow.service.websocket.TelemetryWebsocketService;
-import com.asl.snowplow.service.websocket.ZoneCellWebsocketService;
 
 @Service
 public class RplidarService{
 	@Inject
 	WorldState worldState;
 	
-	@Inject
-	TelemetryWebsocketService telemetryWebsocketService;
+	//@Inject
+	//TelemetryWebsocketService telemetryWebsocketService;
 	
 	@Inject
-	ZoneCellWebsocketService zoneCellWebsocketService;
+	ClientFetchQueueService clientFetchQueueService;
+	
+	//@Inject
+	//ZoneCellWebsocketService zoneCellWebsocketService;
 	
 	@Inject
 	VehicleInstructionService vehicleInstructionService;
@@ -110,15 +111,17 @@ public class RplidarService{
 				
 				//Send the lidar detection to the UI
 				lastScanThreshold = new Date();
-				if(scanNumber%4 == 0) {
-					telemetryWebsocketService.sendLidarDetectionList(detectionUIList);
+				if(scanNumber%10 == 0) {
+					//telemetryWebsocketService.sendLidarDetectionList(detectionUIList);
+					clientFetchQueueService.setLidarPointList(detectionUIList);
 				}
 				
 				Set<ZoneCell> updatedZoneCells = worldState.registerLidarScans(detectionDynObsList, scanNumber);
 				if(updatedZoneCells.size() > 0) { //Update the zonecell list if an obstruction was registered
 					//System.out.println("One or more obstructions were found.");
 					//telemetryWebsocketService.sendZoneCellList();
-					zoneCellWebsocketService.sendZoneCellUpdate(updatedZoneCells);
+					//zoneCellWebsocketService.sendZoneCellUpdate(updatedZoneCells);
+					clientFetchQueueService.getZoneCellList().addAll(updatedZoneCells);
 				}
 			}
 		}else {
@@ -159,7 +162,7 @@ public class RplidarService{
 				
 				//Check for detections in the vehicle's imminent path
 				if(isDetectionInImminentPath(mm[j], (-1 * rAngle))) {
-					System.out.println("collision area detection");
+					//System.out.println("collision area detection");
 					imminentCollisionDetections++;
 				}
 				

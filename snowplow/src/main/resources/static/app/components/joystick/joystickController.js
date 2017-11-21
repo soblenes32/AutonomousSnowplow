@@ -1,5 +1,5 @@
 angular.module("SnowplowApp")
-.controller("JoystickCtrl", function($scope, $mdSidenav, modelService, webSocketService){
+.controller("JoystickCtrl", function($scope, $mdSidenav, modelService, updaterService){
 	$scope.modelService = modelService;
 	$scope.activateJoystick = false;
 	$scope.d = {x:0,y:0}; //Current joystick position
@@ -17,7 +17,7 @@ angular.module("SnowplowApp")
 	$scope.$watch('d', function(){
 		//console.log("sending :" + $scope.d.x + ", " + $scope.d.y);
 		try{
-			webSocketService.sendJoystickData($scope.d);
+			updaterService.sendJoystickData($scope.d);
 		}catch(e){}
 	}, true);
 });

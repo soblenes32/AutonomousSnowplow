@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.util.Date;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.inject.Inject;
@@ -17,9 +16,6 @@ import com.asl.snowplow.command.VehicleCommandType;
 import com.asl.snowplow.model.VehicleOperationMode;
 import com.asl.snowplow.model.VehicleState;
 import com.asl.snowplow.model.WorldState;
-import com.asl.snowplow.model.ZoneCell;
-import com.asl.snowplow.service.websocket.VehicleCommandWebsocketService;
-import com.asl.snowplow.service.websocket.ZoneCellWebsocketService;
 
 /****************************************************************************************
  * High level command queue to enable the vehicle to follow a sequence of instructions
@@ -32,8 +28,11 @@ public class VehicleCommandQueueService {
 	@Inject
 	AutoPlowMotionPlanningService autoPlowMotionPlanningService;
 	
+	//@Inject
+	//VehicleCommandWebsocketService vehicleCommandWebsocketService;
+	
 	@Inject
-	VehicleCommandWebsocketService vehicleCommandWebsocketService;
+	ClientFetchQueueService clientFetchQueueService;
 	
 	@Inject
 	WorldState worldState;
@@ -50,7 +49,8 @@ public class VehicleCommandQueueService {
 		int commandId = nextCommandId++;
 		vehicleCommand.setCommandID(commandId);
 		vehicleCommandQueue.add(vehicleCommand);
-		vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
+		//vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
+		clientFetchQueueService.setVehicleCommandList(vehicleCommandQueue);
 		return commandId;
 	}
 	
@@ -69,7 +69,8 @@ public class VehicleCommandQueueService {
 		if(command != null){
 			vehicleCommandQueue.remove(command);
 			returnVal = true;
-			vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
+			//vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
+			clientFetchQueueService.setVehicleCommandList(vehicleCommandQueue);
 		}
 		
 		return returnVal;
@@ -102,7 +103,8 @@ public class VehicleCommandQueueService {
 			if(vehicleState.getVehicleOperationMode() == VehicleOperationMode.COMMAND_QUEUE){
 				if(worldState.getVehicleState().getMotorATarget() != 0 || worldState.getVehicleState().getMotorATarget() != 0){
 					vehicleInstructionService.stop();
-					vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
+					//vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
+					clientFetchQueueService.setVehicleCommandList(vehicleCommandQueue);
 				}
 				return;
 			}else if(vehicleState.getVehicleOperationMode() == VehicleOperationMode.AUTONOMOUS){
@@ -121,14 +123,16 @@ public class VehicleCommandQueueService {
 					isDone = vehicleInstructionService.moveDirectlyToCoordinate(p);
 					if(isDone){
 						vehicleCommandQueue.poll();
-						vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
+						//vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
+						clientFetchQueueService.setVehicleCommandList(vehicleCommandQueue);
 					}
 				}
 			break;
 			case STOP:
 				vehicleInstructionService.stop();
 				vehicleCommandQueue.poll();
-				vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
+				//vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
+				clientFetchQueueService.setVehicleCommandList(vehicleCommandQueue);
 			break;
 			case STOP_UNTIL:
 				vehicleInstructionService.stop();
@@ -136,7 +140,8 @@ public class VehicleCommandQueueService {
 				if(isDone) {
 					vehicleCommandQueue.poll();
 				}
-				vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
+				//vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
+				clientFetchQueueService.setVehicleCommandList(vehicleCommandQueue);
 			break;
 			case REVERSE_UNTIL:
 				worldState.getVehicleState().setMotorATarget(-100);
@@ -146,7 +151,8 @@ public class VehicleCommandQueueService {
 					vehicleCommandQueue.poll();
 					vehicleInstructionService.stop();
 				}
-				vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
+				//vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
+				clientFetchQueueService.setVehicleCommandList(vehicleCommandQueue);
 			break;
 			case NAV_TO:
 				Point position = new Point((int) Float.parseFloat(args[0]), (int) Float.parseFloat(args[1]));
@@ -165,7 +171,8 @@ public class VehicleCommandQueueService {
 				while(!bufferQueue.isEmpty()){
 					vehicleCommandQueue.add(bufferQueue.poll());
 				}
-				vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
+				//vehicleCommandWebsocketService.sendVehicleCommandQueue(vehicleCommandQueue);
+				clientFetchQueueService.setVehicleCommandList(vehicleCommandQueue);
 			break;
 		}
 		//Notify the ardino of the motors to their new speed

@@ -26,8 +26,11 @@ public class ZoneCellPresetService {
 	@Inject
 	WorldState worldState;
 	
+	//@Inject
+	//ZoneCellWebsocketService zoneCellWebsocketService;
+	
 	@Inject
-	ZoneCellWebsocketService zoneCellWebsocketService;
+	ClientFetchQueueService clientFetchQueueService;
 	
 	@Value("${snowplow.config.zonecellpresetfile}")
 	String zoneCellPresetFile;
@@ -73,9 +76,11 @@ public class ZoneCellPresetService {
 			}
 			worldState.setZoneCellMap(zoneCellMap);
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("*IMPORTANT* - NOT loading default zonecell file: " + PRESET_LOCAL_DIRECTORY+"/"+presetName + " because the file was not found.");
+			//e.printStackTrace();
 		}
-		zoneCellWebsocketService.sendZoneCellUpdate();
+		//zoneCellWebsocketService.sendZoneCellUpdate();
+		clientFetchQueueService.setZoneCellList(worldState.getZoneCellMap().values());
 	}
 	
 }

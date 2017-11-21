@@ -37,12 +37,6 @@ angular.module("SnowplowApp")
 					zoneCellDataModelService.updateZoneCells(angular.fromJson(payload.body));
 		        });
 			});
-//			stompClient.subscribe('/toclient/zones/delta', function (payload) {
-//				$rootScope.$apply(function(){
-//					console.log("received delta.");
-//					zoneCellDataModelService.updateZoneCellDelta(angular.fromJson(payload.body));
-//		        });
-//			});
 		});
 	}
 	

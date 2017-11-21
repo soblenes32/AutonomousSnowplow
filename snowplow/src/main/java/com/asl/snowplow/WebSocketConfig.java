@@ -7,20 +7,20 @@ import org.springframework.web.socket.config.annotation.AbstractWebSocketMessage
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 
-@Configuration
-@EnableScheduling
-@EnableWebSocketMessageBroker
-public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
-
-    @Override
-    public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/toclient"); //Prefix for SockJS client subscription
-        config.setApplicationDestinationPrefixes("/toserver"); //Prefix for SockJS server subscription
-    }
-
-    @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/gs-guide-websocket").withSockJS(); //URL hookup from SockJS client
-    }
-
-}
+//@Configuration
+//@EnableScheduling
+//@EnableWebSocketMessageBroker
+//public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
+//
+//    @Override
+//    public void configureMessageBroker(MessageBrokerRegistry config) {
+//        config.enableSimpleBroker("/toclient"); //Prefix for SockJS client subscription
+//        config.setApplicationDestinationPrefixes("/toserver"); //Prefix for SockJS server subscription
+//    }
+//
+//    @Override
+//    public void registerStompEndpoints(StompEndpointRegistry registry) {
+//        registry.addEndpoint("/gs-guide-websocket").withSockJS(); //URL hookup from SockJS client
+//    }
+//
+//}

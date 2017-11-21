@@ -1,5 +1,5 @@
 angular.module("SnowplowApp")
-.controller("DiagnosticCtrl", function($scope, $location, $timeout, telemetryDataModelService, vehicleCommandDataModelService, telemetryAjaxService, webSocketService){
+.controller("DiagnosticCtrl", function($scope, $location, $timeout, telemetryDataModelService, vehicleCommandDataModelService, telemetryAjaxService, updaterService){
 	$scope.wss = telemetryDataModelService;
 	$scope.vcdms = vehicleCommandDataModelService;
 	$scope.updateAnchors = function(){
@@ -15,6 +15,6 @@ angular.module("SnowplowApp")
 	
 	$scope.rescendCommand = function(command){
 		if(!command.args){command.args = [];}
-		webSocketService.rescendVehicleCommand(command);
+		updaterService.rescendVehicleCommand(command);
 	}
 });

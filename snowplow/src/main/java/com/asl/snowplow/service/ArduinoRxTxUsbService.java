@@ -34,8 +34,11 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 	@Inject
 	WorldState worldState;
 	
+	//@Inject
+	//TelemetryWebsocketService telemetryWebsocketService;
+	
 	@Inject
-	TelemetryWebsocketService telemetryWebsocketService;
+	ClientFetchQueueService clientFetchQueueService;
 	
 	@Value("${snowplow.config.anchorpresetpath}")
 	String anchorPresetFile;
@@ -136,7 +139,8 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 						vs.setMotorAValue(Float.parseFloat(cellArr[1]));
 						vs.setMotorAValue(Float.parseFloat(cellArr[2]));
 					}
-					telemetryWebsocketService.sendVehicleState();
+					clientFetchQueueService.setVehicleState(vs);
+					//telemetryWebsocketService.sendVehicleState();
 				}else if(cellArr[0].equals("T")){ //Parse telemetry. Expected form: [T,X,Y,Z,YAW,PITCH,ROLL,ERRX,ERRY,ERRZ,ERRXY,ERRXZ,ERRYZ]
 					PositionMeasurement pm = new PositionMeasurement();
 					pm.getPosition().setLocation((int) Double.parseDouble(cellArr[1]), (int) Double.parseDouble(cellArr[2]));
@@ -155,8 +159,8 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 						while(headingCalibration < -180) { headingCalibration += 180; }
 						vs.setHeadingCalibration(headingCalibration);
 					}
-					
-					telemetryWebsocketService.sendVehicleState();
+					clientFetchQueueService.setVehicleState(vs);
+					//telemetryWebsocketService.sendVehicleState();
 				}else if(cellArr[0].equals("A")){
 					int anchorCount = (cellArr.length - 1) / 4;
 					worldState.getAnchorStateList().clear();
@@ -167,7 +171,8 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 						as.setPosition( new Vector3D(Integer.parseInt(cellArr[i*4+2]), Integer.parseInt(cellArr[i*4+3]), Integer.parseInt(cellArr[i*4+4])) );
 					}
 					worldState.updateAnchorState();
-					telemetryWebsocketService.sendAnchorStateList();
+					clientFetchQueueService.setAnchorStateList(worldState.getAnchorStateList());
+					//telemetryWebsocketService.sendAnchorStateList();
 				}else{
 					System.out.println("Unknown message from microcontroller: " + inputLine);
 					System.out.println("Parsed data: ");

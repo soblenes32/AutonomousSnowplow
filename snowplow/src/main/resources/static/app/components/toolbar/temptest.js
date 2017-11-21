@@ -3,7 +3,7 @@ angular.module("SnowplowApp")
 	//$scope.menu = {isOpen:false, direction:"left"};
 	$scope.modelService = modelService;
 	$scope.location = $location;
-	
+
 	$scope.signout = function(){
 		$window.location.href = 'signout'
 	};
@@ -17,11 +17,11 @@ angular.module("SnowplowApp")
 	$scope.setCommandMode = function(controlMode){
 		modelService.controlMode=controlMode;
 		if(controlMode == 0){ //Manual
-			updaterService.setOperationMode({vehicleOperationMode:"COMMAND_QUEUE"});
-		}else if (controlMode == 1){ //Joystick
-			updaterService.setOperationMode({vehicleOperationMode:"PAUSED"});
-		}else if (controlMode == 2){ //Autonomous
-			updaterService.setOperationMode({vehicleOperationMode:"AUTONOMOUS"});
+					updaterService.setOperationMode({vehicleOperationMode:"COMMAND_QUEUE"});
+				}else if (controlMode == 1){ //Joystick
+					updaterService.setOperationMode({vehicleOperationMode:"PAUSED"});
+				}else if (controlMode == 2){ //Autonomous
+					updaterService.setOperationMode({vehicleOperationMode:"AUTONOMOUS"});
 		}
 	}
 });

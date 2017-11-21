@@ -11,13 +11,16 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.springframework.stereotype.Service;
 
 import com.asl.snowplow.service.ArduinoRxTxUsbService;
+import com.asl.snowplow.service.ClientFetchQueueService;
 import com.asl.snowplow.service.MotorDesignator;
 import com.asl.snowplow.service.SnowVolumeSimulationService;
 import com.asl.snowplow.service.TelemetryFilterService;
-import com.asl.snowplow.service.websocket.ZoneCellWebsocketService;
 
 @Service
 public class VehicleState {
+	
+	//@Inject
+	//WorldState worldState;
 	
 	@Inject
 	ArduinoRxTxUsbService rxTxUsbService;
@@ -28,8 +31,11 @@ public class VehicleState {
 	@Inject
 	SnowVolumeSimulationService snowVolumeSimulationService;
 	
+	//@Inject
+	//ZoneCellWebsocketService zoneCellWebsocketService;
+	
 	@Inject
-	ZoneCellWebsocketService zoneCellWebsocketService;
+	ClientFetchQueueService clientFetchQueueService;
 	
 	//Instructions sent to arduino reflect targets
 	private float motorATarget = 0;
@@ -118,12 +124,14 @@ public class VehicleState {
 		if(modifiedZoneCellSet.size() > 0) {
 			snowVolFramesSinceKeyframe++;
 			if(snowVolFramesSinceKeyframe > SNOW_VOL_KEYFRAME) { //Send a keyframe every so ofter to update the whole field
-				System.out.println("Sending complete snowvolume update");
-				zoneCellWebsocketService.sendZoneCellUpdate();
+				//System.out.println("Sending complete snowvolume update");
+				//zoneCellWebsocketService.sendZoneCellUpdate();
+				//clientFetchQueueService.setZoneCellList(worldState.getZoneCellMap().values());
 				snowVolFramesSinceKeyframe = 0;
 			}else {
-				System.out.println("Sending snowvolume cell updates: " + modifiedZoneCellSet.size());
-				zoneCellWebsocketService.sendZoneCellUpdate(modifiedZoneCellSet);
+				//System.out.println("Sending snowvolume cell updates: " + modifiedZoneCellSet.size());
+				//zoneCellWebsocketService.sendZoneCellUpdate(modifiedZoneCellSet);
+				clientFetchQueueService.getZoneCellList().addAll(modifiedZoneCellSet);
 			}
 		}
 		

@@ -9,39 +9,53 @@ import org.springframework.messaging.core.MessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import com.asl.snowplow.model.WorldState;
+import com.asl.snowplow.service.ClientFetchQueueService;
 
-@Service
+/*****************************************************************************
+ * Hooking up to clientUpdateFetchController to use ajax workaround because
+ * websocket is not working without internet connection
+ *****************************************************************************/
+
+//@Service
 public class TelemetryWebsocketService {
 	
 	@Inject
 	WorldState worldState;
 	
 	@Inject
-	private MessageSendingOperations<String> messagingTemplate;
+	ClientFetchQueueService clientFetchQueueService;
+	
+//	@Inject
+//	private MessageSendingOperations<String> messagingTemplate;
+
+//	public synchronized void sendVehicleState() {
+//		synchronized(messagingTemplate) {
+//			messagingTemplate.convertAndSend("/toclient/telemetry/vehicle", worldState.getVehicleState());
+//		}
+//	}
+//	
+//	public synchronized void sendAnchorStateList() {
+//		synchronized(messagingTemplate) {
+//			messagingTemplate.convertAndSend("/toclient/telemetry/anchors", worldState.getAnchorStateList());
+//		}
+//	}
+//	
+//	public synchronized void sendLidarDetectionList(List<Point> lidarPointList) {
+//		synchronized(messagingTemplate) {
+//			messagingTemplate.convertAndSend("/toclient/telemetry/lidar", lidarPointList);
+//		}
+//	}
 
 	public synchronized void sendVehicleState() {
-		synchronized(messagingTemplate) {
-			messagingTemplate.convertAndSend("/toclient/telemetry/vehicle", worldState.getVehicleState());
-		}
+		clientFetchQueueService.setVehicleState(worldState.getVehicleState());
 	}
 	
 	public synchronized void sendAnchorStateList() {
-		synchronized(messagingTemplate) {
-			messagingTemplate.convertAndSend("/toclient/telemetry/anchors", worldState.getAnchorStateList());
-		}
+		clientFetchQueueService.setAnchorStateList(worldState.getAnchorStateList());
 	}
 	
-	//Replaced with ZoneCellWebsocketService.sendZoneCellUpdate()
-//	public synchronized void sendZoneCellList() {
-//		synchronized(messagingTemplate) {
-//			messagingTemplate.convertAndSend("/toclient/telemetry/zones", worldState.getZoneCellMap().values());
-//		}
-//	}
-	
 	public synchronized void sendLidarDetectionList(List<Point> lidarPointList) {
-		synchronized(messagingTemplate) {
-			messagingTemplate.convertAndSend("/toclient/telemetry/lidar", lidarPointList);
-		}
+		clientFetchQueueService.setLidarPointList(lidarPointList);
 	}
 	
 }
