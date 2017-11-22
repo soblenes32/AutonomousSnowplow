@@ -47,22 +47,22 @@ angular.module("SnowplowApp")
 		});
 	};
 	
-	this.setOperationMode = function(mode){
+	this.sendZoneCellData = function(d){
 		return $http({
 			method: 'POST',
-			url: '/vehiclecommand/mode',
-			data: mode
+			url: '/zones/issue',
+			data: d
 		});
 	};
 
 	/*********************************************************************************
 	 * Operational mode
 	 *********************************************************************************/
-	this.setOperationMode = function(d){
+	this.setOperationMode = function(mode){
 		return $http({
 			method: 'POST',
 			url: '/vehiclecommand/mode',
-			data: d
+			data: mode
 		});
 	};
 }); 

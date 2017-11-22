@@ -25,6 +25,18 @@ public class ClientFetchQueueService {
 	private List<AnchorState> anchorStateList 			= null;
 	private List<Point> lidarPointList 					= null;
 	
+	public ClientFetchQueueService copy() {
+		synchronized(this) {
+			ClientFetchQueueService c = new ClientFetchQueueService();
+			c.zoneCellList = new ArrayList<ZoneCell>(zoneCellList);
+			c.vehicleCommandList = this.vehicleCommandList;
+			c.vehicleState = this.vehicleState;
+			c.anchorStateList = this.anchorStateList;
+			c.lidarPointList = this.lidarPointList;
+			return c;
+		}
+	}
+	
 	public void clear() {
 		zoneCellList.clear();
 		vehicleCommandList = null;

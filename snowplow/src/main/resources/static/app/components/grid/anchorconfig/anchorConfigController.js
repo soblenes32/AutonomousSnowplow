@@ -11,6 +11,20 @@ angular.module("SnowplowApp")
 				{name:"0x6165", position:{x:"3000", y:"0", z:"1"}},
 				{name:"0x6169", position:{x:"0", y:"3000", z:"1"}},
 				{name:"0x6879", position:{x:"3000", y:"3000", z:"1"}}]
+		},{
+			name:"SingleI",
+			anchors:[
+				{name:"0x681C", position:{x:"0", y:"0", z:"1"}},
+				{name:"0x6165", position:{x:"5000", y:"0", z:"1"}},
+				{name:"0x6169", position:{x:"0", y:"15000", z:"1"}},
+				{name:"0x6879", position:{x:"5000", y:"15000", z:"1"}}]
+		},{
+			name:"TripleI",
+			anchors:[
+				{name:"0x681C", position:{x:"0", y:"0", z:"1"}},
+				{name:"0x6165", position:{x:"7000", y:"0", z:"1"}},
+				{name:"0x6169", position:{x:"0", y:"15000", z:"1"}},
+				{name:"0x6879", position:{x:"7000", y:"15000", z:"1"}}]
 		}
 	];
 	
