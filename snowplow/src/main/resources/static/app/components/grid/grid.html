@@ -1,7 +1,7 @@
 <div layout="column" layout-align="start" class="background-graduate" ng-cloak flex>
 	<div style="float:right; position:absolute;">
 		<md-button class="md-fab md-primary" aria-label="open grid markers" ng-click="toggleSideNav()">
-			<md-icon class="material-icons" >menu</md-icon>
+			<md-icon class="fa fa-bars" ></md-icon>
         </md-button>
 	</div>
 
@@ -27,14 +27,14 @@
 		<md-list>
 			<md-subheader class="md-no-sticky">Actions</md-subheader>
 			<md-list-item ng-click="stopVehicle()">
-				<md-icon class="material-icons">stop</md-icon>
+				<md-icon class="fa fa-stop"></md-icon>
 				<p>Stop now</p>
 			</md-list-item>
 			
 			<md-divider></md-divider>
 			
 			<md-list-item ng-class="{'active':activity=='waypoint'}" ng-click="activity='waypoint';">
-				<md-icon class="material-icons">my_location</md-icon>
+				<md-icon class="fa fa-thumb-tack"></md-icon>
 				<p>Add waypoint</p>
 			</md-list-item>
 			
@@ -46,31 +46,31 @@
 			</md-subheader>
 			
 			<md-list-item ng-class="{'active':activity=='plowzone'}" ng-click="activity='plowzone';">
-				<md-icon class="material-icons">texture</md-icon>
+				<md-icon class="fa fa-snowflake-o"></md-icon>
 				<p>Plow zone</p>
 				<md-button class="md-icon-button md-primary md-secondary md-raised" aria-label="Settings" ng-click="launchZoneCellPresetDialog($event)">
-					<md-icon class="material-icons">input</md-icon>
+					<md-icon class="fa fa-keyboard-o"></md-icon>
 				</md-button>
 			</md-list-item>
 			
 			<md-divider></md-divider>
 			
 			<md-list-item ng-class="{'active':activity=='plowedsnowzone'}" ng-click="activity='plowedsnowzone';">
-				<md-icon class="material-icons">ac_unit</md-icon>
+				<md-icon class="fa fa-th"></md-icon>
 				<p>Plowed-snow zone</p>
 			</md-list-item>
 			
 			<md-divider></md-divider>
 			
 			<md-list-item ng-class="{'active':activity=='parkingzone'}" ng-click="activity='parkingzone';">
-				<md-icon class="material-icons">local_parking</md-icon>
+				<md-icon class="fa fa-car"></md-icon>
 				<p>Park zone</p>
 			</md-list-item>
 			
 			<md-divider></md-divider>
 			
 			<md-list-item class="md-primary" ng-click="clearAllZones()">
-				<md-icon class="material-icons" >do_not_disturb</md-icon>
+				<md-icon class="fa fa-ban" ></md-icon>
 				<p>Clear all zones</p>
 			</md-list-item>
 			
@@ -79,7 +79,7 @@
 			<md-subheader class="md-no-sticky">Obstructions</md-subheader>
 			
 			<md-list-item ng-class="{'active':activity=='addobstruction'}" ng-click="activity='addobstruction';">
-				<md-icon class="material-icons">grid_on</md-icon>
+				<md-icon class="fa fa-times-circle-o"></md-icon>
 				<p>Add obstruction</p>
 			</md-list-item>
 			
@@ -95,11 +95,11 @@
 			<md-subheader class="md-no-sticky">Calibration</md-subheader>
 			
 			<md-list-item ng-class="{'active':activity=='moveanchors'}" ng-click="activity='moveanchors';">
-				<md-icon class="material-icons">zoom_out_map</md-icon>
+				<md-icon class="fa fa-map-pin"></md-icon>
 				<p>Move anchors</p>
 				
 				<md-button class="md-icon-button md-primary md-secondary md-raised" aria-label="Settings" ng-click="launchCalibrationDialog($event)">
-					<md-icon class="material-icons">input</md-icon>
+					<md-icon class="fa fa-keyboard-o"></md-icon>
 				</md-button>
 				
 			</md-list-item>
@@ -107,7 +107,7 @@
 			<md-divider></md-divider>
 			
 			<md-list-item ng-click="autoCalibrateAnchors()">
-				<md-icon class="material-icons">settings_overscan</md-icon>
+				<md-icon class="fa fa-arrows-alt"></md-icon>
 				<p>Auto calibrate anchors</p>
 			</md-list-item>
 			
@@ -115,7 +115,7 @@
 			
 		</md-list>
 		<md-slider-container>
-			<md-icon class="material-icons">settings_backup_restore</md-icon>
+			<md-icon class="fa fa-repeat"></md-icon>
 			<md-slider flex min="-180" max="180" ng-model="form.headingCalibration" ng-change="updateHeadingCalibration()" aria-label="heading offset"></md-slider>
 			<md-input-container>
 				<input flex type="number" ng-model="form.headingCalibration" aria-label="heading offset">

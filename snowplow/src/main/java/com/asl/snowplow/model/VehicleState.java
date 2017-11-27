@@ -167,6 +167,13 @@ public class VehicleState {
 //		return isValid;
 //	}
 	
+	public double getCalibratedHeading() {
+		double result = orientation.getZ() + headingCalibration;
+		while(result > 360) { result -= 360; }
+		while(result < 0) { result += 360; }
+		return result;
+	}
+	
 	public float getMotorATarget() {
 		return motorATarget;
 	}

@@ -28,28 +28,44 @@ public class SnowVolumeSimulationService{
 	public Set<ZoneCell> updateSnowVolume(){
 		VehicleState vs = worldState.getVehicleState();
 		Set<ZoneCell> modifiedZoneCellSet = new HashSet<>();
-		
+
 		//Short circuit if the vehicle initialization is not complete
 		if(vs.getLastPositionMeasurement() == null) {
 			return modifiedZoneCellSet;
 		}
-		
+
 		Point positionZoneCellIdx = VehicleInstructionService.positionToZoneCellIdx(vs.getPosition());
 		Point lastPositionZoneCellIdx = VehicleInstructionService.positionToZoneCellIdx(vs.getLastPositionMeasurement());
-		
+
 		//If the vehicle has moved to another zoneCell
 		if(!positionZoneCellIdx.equals(lastPositionZoneCellIdx)){
-			//Determine the direction of motion
+			/****************************************************************************
+			* Instead of calculating based on last position of the vehicle, move snow
+			* based on the vehicle heading
+			****************************************************************************/
 			Point vehicleZoneCellIdx = VehicleInstructionService.positionToZoneCellIdx(vs.getPosition());
-			Point lastZoneCellIdx = VehicleInstructionService.positionToZoneCellIdx(vs.getLastPositionMeasurement());
-			int xOffset = vehicleZoneCellIdx.x - lastZoneCellIdx.x;
-			int yOffset = vehicleZoneCellIdx.y - lastZoneCellIdx.y;
-			//confine motion to range [1, 0, -1] in each dimension
-			xOffset = (xOffset > 1)?1:
-				(xOffset < -1)?-1:xOffset;
-			yOffset = (yOffset > 1)?1:
-				(yOffset < -1)?-1:yOffset;
+//			Point lastZoneCellIdx = VehicleInstructionService.positionToZoneCellIdx(vs.getLastPositionMeasurement());
+//			int xOffset = vehicleZoneCellIdx.x - lastZoneCellIdx.x;
+//			int yOffset = vehicleZoneCellIdx.y - lastZoneCellIdx.y;
+//			//confine motion to range [1, 0, -1] in each dimension
+//			xOffset = (xOffset > 1)?1:
+//				(xOffset < -1)?-1:xOffset;
+//			yOffset = (yOffset > 1)?1:
+//				(yOffset < -1)?-1:yOffset;
+			int xOffset = 0;
+			int yOffset = 0;
 			
+			double heading = vs.getCalibratedHeading();
+			if(heading > 337.5 || heading <= 22.5){yOffset = 1;}
+			if(heading > 22.5 && heading <= 67.5){yOffset = 1; xOffset = 1;}
+			if(heading > 67.5 && heading <= 112.5){xOffset = 1;}
+			if(heading > 112.5 && heading <= 157.5){yOffset = -1; xOffset = 1;}
+			if(heading > 157.5 && heading <= 202.5){yOffset = -1;}
+			if(heading > 202.5 && heading <= 247.5){yOffset = -1; xOffset = -1;}
+			if(heading > 247.5 && heading <= 292.5){xOffset = -1;}
+			if(heading > 292.5 && heading <= 337.5){yOffset = 1; xOffset = -1;}
+
+
 			//DEBUG
 			//ZoneCell zc = worldState.getZoneCellMap().getOrDefault(vehicleZoneCellIdx, new ZoneCell());
 			//System.out.println("Snow under vehicle: " + zc.getSnowVolume());
@@ -69,7 +85,6 @@ public class SnowVolumeSimulationService{
 		}
 		return modifiedZoneCellSet;
 	}
-	
 	
 	public void moveSnow(Point zoneCellIdx, int xDir, int yDir, Set<ZoneCell> modifiedZoneCellSet){
 		Point vehicleZoneCellIdx = VehicleInstructionService.positionToZoneCellIdx(worldState.getVehicleState().getPosition());

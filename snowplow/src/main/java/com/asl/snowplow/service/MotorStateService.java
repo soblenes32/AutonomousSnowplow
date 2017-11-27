@@ -20,6 +20,10 @@ public class MotorStateService {
 	 * x: -100 = left turn; 100 = right turn
 	 * y: -100 = full forward; 100 = full backwards
 	 * 
+	 * Note: the joystick interprets "up" motion on the Y axis as 
+	 * negative values and "down" motion as positive. Here, we reverse
+	 * these values because we want "up" to be forwards.
+	 * 
 	 * forward (0, -100)
 	 * backward(0, 100)
 	 * left(-100, 0)
@@ -30,17 +34,16 @@ public class MotorStateService {
 	 ******************************************************************/
 	public void joystickToMotorCommands(JoystickCommand jc){
 		float leftMotor = (jc.getX() + (-1 * jc.getY())) / 100;
+		float rightMotor = ((-1 * jc.getX()) + (-1 * jc.getY())) / 100;
 		leftMotor = (leftMotor > 1)? 1:leftMotor;
 		leftMotor = (leftMotor < -1)? -1:leftMotor;
-		//rxTxUsbService.setMotorSpeed(leftMotor, MotorDesignator.LEFT);
-		rxTxUsbService.setMotorSpeed(leftMotor, MotorDesignator.RIGHT);
-		
-		float rightMotor = ((-1 * jc.getX()) + (-1 * jc.getY())) / 100;
 		rightMotor = (rightMotor > 1)? 1:rightMotor;
 		rightMotor = (rightMotor < -1)? -1:rightMotor;
-		//rxTxUsbService.setMotorSpeed(rightMotor, MotorDesignator.RIGHT);
+		
+		System.out.println("inputs: (" + jc.getX() + ", " + jc.getY() + "), leftMotor: " + leftMotor + ", rightMotor: " + rightMotor);
+		
+		rxTxUsbService.setMotorSpeed(leftMotor, MotorDesignator.RIGHT);
 		rxTxUsbService.setMotorSpeed(leftMotor, MotorDesignator.LEFT);
-		//System.out.println("leftMotor: " + leftMotor + ", rightMotor: " + rightMotor);
 	}
 	
 	
