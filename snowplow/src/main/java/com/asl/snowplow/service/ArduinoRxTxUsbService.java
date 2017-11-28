@@ -211,7 +211,7 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 	 * @param speed value between -1 and 1
 	 ******************************************************/
 	public void setMotorSpeed(float speedPercent, MotorDesignator designator){
-		//System.out.println("Setting " + designator.designation + " motor to: " + speedPercent);
+		System.out.println("Setting " + designator.designation + " motor to: " + speedPercent);
 		int motorSpeed = (int) (255f * speedPercent);
 		String message = new StringBuilder("S")
 			.append(designator.getDesignation())
