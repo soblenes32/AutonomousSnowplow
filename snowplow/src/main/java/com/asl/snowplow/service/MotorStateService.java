@@ -42,7 +42,7 @@ public class MotorStateService {
 		
 		//System.out.println("inputs: (" + jc.getX() + ", " + jc.getY() + "), leftMotor: " + leftMotor + ", rightMotor: " + rightMotor);
 		
-		rxTxUsbService.setMotorSpeed(leftMotor, MotorDesignator.RIGHT);
+		rxTxUsbService.setMotorSpeed(rightMotor, MotorDesignator.RIGHT);
 		rxTxUsbService.setMotorSpeed(leftMotor, MotorDesignator.LEFT);
 	}
 	
