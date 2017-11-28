@@ -40,7 +40,7 @@ public class MotorStateService {
 		rightMotor = (rightMotor > 1)? 1:rightMotor;
 		rightMotor = (rightMotor < -1)? -1:rightMotor;
 		
-		System.out.println("inputs: (" + jc.getX() + ", " + jc.getY() + "), leftMotor: " + leftMotor + ", rightMotor: " + rightMotor);
+		//System.out.println("inputs: (" + jc.getX() + ", " + jc.getY() + "), leftMotor: " + leftMotor + ", rightMotor: " + rightMotor);
 		
 		rxTxUsbService.setMotorSpeed(leftMotor, MotorDesignator.RIGHT);
 		rxTxUsbService.setMotorSpeed(leftMotor, MotorDesignator.LEFT);

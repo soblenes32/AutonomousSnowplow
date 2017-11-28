@@ -199,6 +199,7 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 		}
 		
 		try {
+			System.out.println("writing to arduino: " + message);
 			output.write(message.getBytes(StandardCharsets.US_ASCII));
 		} catch (IOException e) {
 			e.printStackTrace();
