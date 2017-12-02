@@ -67,13 +67,11 @@ public class VehicleInstructionService {
 			leftMotor = 1;
 			rightMotor = 1;
 			
-			leftMotor *= 1 + (angle * 0.001);
-			rightMotor *= 1 - (angle * 0.001);
+			leftMotor *= 1 + (angle * 0.02);
+			rightMotor *= 1 - (angle * 0.02);
 		}else{
-			//leftMotor = (float) (angle / 180);
-			//rightMotor = (float) (angle / -180);
-			leftMotor = (angle > 0)?0.4f:-0.4f;
-			rightMotor = (angle > 0)?-0.4f:0.4f;
+			leftMotor = (angle > 0)?0.30f:-0.30f;
+			rightMotor = (angle > 0)?-0.30f:0.30f;
 		}
 		
 		worldState.getVehicleState().setMotorATarget(leftMotor);

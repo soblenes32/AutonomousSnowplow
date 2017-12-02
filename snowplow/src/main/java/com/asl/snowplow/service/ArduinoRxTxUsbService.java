@@ -55,6 +55,7 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 	private static final int DATA_RATE 		= 9600;
 	private static final String PORT_NAME 	= "/dev/arduino";
 	private static final String LINEBREAK_TERMINATOR = "\n";
+	private static final float SCALE_SPEED	= 0.75f; //Multiplier applied to all speeds
 	
 	//When set to true, upon the next heading reading, the offset will be set such that
 	//the current adjusted heading is equal to the snowplow.config.defaultheading
@@ -199,7 +200,7 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 		}
 		
 		try {
-			System.out.println("writing to arduino: " + message);
+			//System.out.println("writing to arduino: " + message);
 			output.write(message.getBytes(StandardCharsets.US_ASCII));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -211,8 +212,8 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 	 * @param speed value between -1 and 1
 	 ******************************************************/
 	public void setMotorSpeed(float speedPercent, MotorDesignator designator){
-		System.out.println("Setting " + designator.designation + " motor to: " + speedPercent);
-		int motorSpeed = (int) (255f * speedPercent);
+		int motorSpeed = (int) (255f * speedPercent * SCALE_SPEED);
+		System.out.println("Setting " + designator.designation + " to " + speedPercent + "%, ("+ motorSpeed + "/255)");
 		String message = new StringBuilder("S")
 			.append(designator.getDesignation())
 			.append(motorSpeed)

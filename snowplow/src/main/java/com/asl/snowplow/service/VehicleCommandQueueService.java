@@ -109,6 +109,7 @@ public class VehicleCommandQueueService {
 				return;
 			}else if(vehicleState.getVehicleOperationMode() == VehicleOperationMode.AUTONOMOUS){
 				List<VehicleCommand> plowCommandList = autoPlowMotionPlanningService.generateNextCommands();
+				System.out.println("Adding " + plowCommandList + " commands to the queue");
 				vehicleCommandQueue.addAll(plowCommandList);
 				//If no further snow to plow, then idle
 				return;

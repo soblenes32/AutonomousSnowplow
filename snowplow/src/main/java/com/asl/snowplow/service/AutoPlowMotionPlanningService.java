@@ -38,6 +38,8 @@ public class AutoPlowMotionPlanningService{
 		List<VehicleCommand> vehicleCommandList = new ArrayList<VehicleCommand>();
 		List<PlowVector> plowVectorList = listAllPlowVectors();
 		
+		System.out.println("Found " + plowVectorList.size() + " valid plowvectors.");
+		
 		if(plowVectorList.size() > 0){
 			//PLOWING
 			//Find the origin closest to the current vehiclePosition

@@ -179,7 +179,7 @@ public class VehicleState {
 	}
 	public synchronized void setMotorATarget(float motorATarget) {
 		this.motorATarget = motorATarget;
-		rxTxUsbService.setMotorSpeed(motorATarget, MotorDesignator.RIGHT);
+		rxTxUsbService.setMotorSpeed(motorATarget, MotorDesignator.LEFT);
 	}
 	public float getMotorAValue() {
 		return motorAValue;
@@ -192,7 +192,7 @@ public class VehicleState {
 	}
 	public synchronized void setMotorBTarget(float motorBTarget) {
 		this.motorBTarget = motorBTarget;
-		rxTxUsbService.setMotorSpeed(motorBTarget, MotorDesignator.LEFT);
+		rxTxUsbService.setMotorSpeed(motorBTarget, MotorDesignator.RIGHT);
 	}
 	public float getMotorBValue() {
 		return motorBValue;

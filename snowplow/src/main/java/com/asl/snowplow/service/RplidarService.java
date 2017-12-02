@@ -137,22 +137,12 @@ public class RplidarService{
 	 ********************************************************************************************************/
 	private void convertScanToGlobalCoordinates(RpLidarScan scan, List<Point> detectionUIList, List<Point> detectionDynObsList){
 		int scanCount = 0;
-		int lowAngle = -1;
-		int highAngle = -1;
-		StringBuilder sb = new StringBuilder();
 		VehicleState vehicleState = worldState.getVehicleState();
 		for (int j = 0; j < RpLidarScan.N; j++) {
 			int rAngle = (j/64) + 180;
 			Date scanTime = new Date(scan.time[j]);
 			
 			if( scan.distance[j] != 0 && scanTime.after(lastScanThreshold)) {
-				//DEBUG
-				if(lowAngle < 0) {
-					lowAngle = rAngle;
-				}
-				highAngle = rAngle;
-				sb.append(rAngle).append(",");
-				
 				scanCount++;
 				
 				//Discard any detections on the inside of the wall of the container (ie. < 20cm distant)
@@ -162,9 +152,10 @@ public class RplidarService{
 				
 				//Check for detections in the vehicle's imminent path
 				if(isDetectionInImminentPath(mm[j], (-1 * rAngle))) {
-					//System.out.println("collision area detection");
+					System.out.println("Collision detection. Angle: " + rAngle + ", distance: " + mm[j]);
 					imminentCollisionDetections++;
 				}
+				
 				
 				//Convert vehicle-relative heading to world-relative heading
 				Point position = vehicleState.getPosition();
@@ -196,7 +187,6 @@ public class RplidarService{
 				}
 			}
 		}
-		//System.out.println("scanCount: " + scanCount + ", lowAngle: " + lowAngle + ", highAngle: " + highAngle + ", angles: " + sb.toString());
 	}
 	
 	
