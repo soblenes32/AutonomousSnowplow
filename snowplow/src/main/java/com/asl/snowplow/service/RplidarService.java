@@ -145,8 +145,8 @@ public class RplidarService{
 			if( scan.distance[j] != 0 && scanTime.after(lastScanThreshold)) {
 				scanCount++;
 				
-				//Discard any detections on the inside of the wall of the container (ie. < 20cm distant)
-				if(mm[j] < 200) {
+				//Discard any detections on the inside of the wall of the container or guardrail (ie. < 40cm distant)
+				if(mm[j] < 400) {
 					continue;
 				}
 				

@@ -76,25 +76,29 @@ public class AutoPlowMotionPlanningService{
 		}else{
 			//UNPLOWED SNOWZONES
 			//Calculate diagonal plow options?
-		
+			System.out.println("It's time to park."); 
 			//PARKING
 			Point parkingSpotIdx = findParkZoneCentroidIdx(); 
-			Point parkingSpotPosition = VehicleInstructionService.zoneCellIdxToPosition(parkingSpotIdx);
-			System.out.println("My parking spot idx is: " + parkingSpotPosition); 
-			if(worldState.getVehicleState().getPosition().distance(parkingSpotPosition) < 250){ 
-				System.out.println("Arrived at parking spot. Halting for 30 seconds."); 
-				VehicleCommand vc = new VehicleCommand(VehicleCommandType.STOP_UNTIL); 
-				Calendar calendar = Calendar.getInstance(); 
-				calendar.add(Calendar.SECOND, 30); 
-				String[] args = {""+calendar.getTime().getTime()};
-				vc.setArgs(args); 
-				vehicleCommandList.add(vc);
-			} else {
-				System.out.println("Navigating to destination");
-				VehicleCommand vc = new VehicleCommand(VehicleCommandType.NAV_TO);
-				String[] args = {""+parkingSpotPosition.getX(), ""+parkingSpotPosition.getY()};
-				vc.setArgs(args);
-				vehicleCommandList.add(vc);
+			if(parkingSpotIdx != null) {
+				Point parkingSpotPosition = VehicleInstructionService.zoneCellIdxToPosition(parkingSpotIdx);
+				System.out.println("My parking spot idx is: " + parkingSpotPosition); 
+				if(worldState.getVehicleState().getPosition().distance(parkingSpotPosition) < 250){ 
+					System.out.println("Arrived at parking spot. Halting for 30 seconds."); 
+					VehicleCommand vc = new VehicleCommand(VehicleCommandType.STOP_UNTIL); 
+					Calendar calendar = Calendar.getInstance(); 
+					calendar.add(Calendar.SECOND, 30); 
+					String[] args = {""+calendar.getTime().getTime()};
+					vc.setArgs(args); 
+					vehicleCommandList.add(vc);
+				} else {
+					System.out.println("Navigating to destination");
+					VehicleCommand vc = new VehicleCommand(VehicleCommandType.NAV_TO);
+					String[] args = {""+parkingSpotPosition.getX(), ""+parkingSpotPosition.getY()};
+					vc.setArgs(args);
+					vehicleCommandList.add(vc);
+				}
+			}else {
+				System.out.println("Unable to location parking spot.");
 			}
 			
 		}
@@ -224,7 +228,7 @@ public class AutoPlowMotionPlanningService{
 	* Finds the center coordinate index of the designated parkzone. If no parkzones
 	* have been designated, then returns null
 	**********************************************************************************/
-	public Point findParkZoneCentroidIdx(){ 
+	public Point findParkZoneCentroidIdx(){
 	    //Build a list that just contains the valid, unobstructed parkzonecells 
 	    ZoneCell bestCandidate = null; 
 	    double bestCandidateMeanDistance = 9999999; 
@@ -245,7 +249,7 @@ public class AutoPlowMotionPlanningService{
 	            bestCandidate = pz; 
 	            bestCandidateMeanDistance = candidateMeanDistance; 
 	        } 
-	    } 
+	    }
 	    return (bestCandidate != null)?bestCandidate.getCoordinates():null; 
 	} 
 }
