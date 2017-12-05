@@ -120,9 +120,11 @@ public class AutoPlowMotionPlanningService{
 		//...and check each direction from them for valid plow vectors
 		for(Point origin:plowedSnowZoneCellIdxList){
 			for(int direction: directions){
+				System.out.println("# of zonecell coordinates: " + plowedSnowZoneCellIdxList.size());
 				Point p = findNextZoneCell(origin, direction);
 				Point source = findPlowVectorSource(p, origin, null, direction, maxDistanceM);
 				if(source != null){
+					System.out.println("Identified a valid plowvector!");
 					p = findNextZoneCell(origin, (-1 * direction));
 					Point destination = findPlowVectorSource(p, origin, (-1 * direction));
 					PlowVector plowVector = new PlowVector();
