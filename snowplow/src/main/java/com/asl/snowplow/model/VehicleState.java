@@ -66,7 +66,7 @@ public class VehicleState {
 	private int obstructionSearchRadius = 6;
 	
 	//Radius of the vehicle's plow measured in decimeters/10cm
-	private int plowReachRadius = 1;
+	private int plowReachRadius = 3;
 	
 	//Euclidian rotation of the vehicle relative to the origin
 	private Vector3D orientation = new Vector3D(0,0,0);

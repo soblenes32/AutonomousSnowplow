@@ -71,7 +71,7 @@ public class SnowVolumeSimulationService{
 			//System.out.println("Snow under vehicle: " + zc.getSnowVolume());
 
 			//Sum up snow volume over motion vectors //
-			List<Point> zoneCellsUnderVehicleList = vehicleInstructionService.findAdjacentZoneCellIndexes(vehicleZoneCellIdx, vs.getObstructionSearchRadius(), true); //vs.getPlowReachRadius()
+			List<Point> zoneCellsUnderVehicleList = vehicleInstructionService.findAdjacentZoneCellIndexes(vehicleZoneCellIdx, vs.getPlowReachRadius(), true); //vs.getObstructionSearchRadius()
 			for(Point zoneCellIdx: zoneCellsUnderVehicleList) {
 				ZoneCell searchCell = worldState.getZoneCellMap().get(zoneCellIdx);
 				if(searchCell != null && searchCell.getSnowVolume() > 0){
