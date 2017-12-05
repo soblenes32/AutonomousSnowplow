@@ -3,6 +3,7 @@ package com.asl.snowplow.service;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
 
@@ -19,7 +20,7 @@ import com.asl.snowplow.model.ZoneCell;
  *******************************************************************************/
 @Service
 public class ClientFetchQueueService {
-	private Collection<ZoneCell> zoneCellList 			= new ArrayList<>();
+	private Collection<ZoneCell> zoneCellList 			=  Collections.synchronizedList(new ArrayList<>());
 	private Queue<VehicleCommand> vehicleCommandList 	= null;
 	private VehicleState vehicleState 					= null;
 	private List<AnchorState> anchorStateList 			= null;
@@ -46,14 +47,11 @@ public class ClientFetchQueueService {
 	}
 	
 	public Collection<ZoneCell> getZoneCellList() {
-		synchronized(this) {
-			return zoneCellList;
-		}
+		return zoneCellList;
 	}
 	public void setZoneCellList(Collection<ZoneCell> zoneCellList) {
-		synchronized(this) {
-			this.zoneCellList = zoneCellList;
-		}
+		this.zoneCellList.clear();
+		this.zoneCellList.addAll(zoneCellList);
 	}
 	public Queue<VehicleCommand> getVehicleCommandList() {
 		synchronized(this) {
