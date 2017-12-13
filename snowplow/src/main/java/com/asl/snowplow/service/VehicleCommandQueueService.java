@@ -82,7 +82,7 @@ public class VehicleCommandQueueService {
 	public void purgeAllCommands(){
 		vehicleCommandQueue.clear();
 	}
-	
+
 	/************************************************************************************
 	 * Executes the command at the head of the queue at 20hz. When command is complete,
 	 * pops it from the queue. 
@@ -92,6 +92,7 @@ public class VehicleCommandQueueService {
 		VehicleCommand command = vehicleCommandQueue.peek();
 		VehicleState vehicleState = worldState.getVehicleState();
 		
+		//System.out.println("size of cannonical vehicleCommandQueue: " + vehicleCommandQueue.size());
 		
 		//If the mode is paused, do not process the command queue
 		if(vehicleState.getVehicleOperationMode() == VehicleOperationMode.PAUSED){
@@ -109,9 +110,10 @@ public class VehicleCommandQueueService {
 				return;
 			}else if(vehicleState.getVehicleOperationMode() == VehicleOperationMode.AUTONOMOUS){
 				List<VehicleCommand> plowCommandList = autoPlowMotionPlanningService.generateNextCommands();
-				System.out.println("Adding " + plowCommandList + " commands to the queue");
+				System.out.println("Adding " + plowCommandList.size() + " commands to the queue");
 				vehicleCommandQueue.addAll(plowCommandList);
 				//If no further snow to plow, then idle
+				clientFetchQueueService.setVehicleCommandList(vehicleCommandQueue);
 				return;
 			}
 		}
@@ -177,5 +179,10 @@ public class VehicleCommandQueueService {
 			break;
 		}
 		//Notify the ardino of the motors to their new speed
+	}
+
+
+	public Queue<VehicleCommand> getVehicleCommandQueue() {
+		return vehicleCommandQueue;
 	}
 }

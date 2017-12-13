@@ -20,7 +20,7 @@ angular.module("SnowplowApp")
 	this.zoneCellUpdateSequence = 0;
 	
 	this.updateZoneCells = function(updateZoneCellArr){
-		console.log("Updating zone cells: " + updateZoneCellArr.length);
+		//console.log("Updating zone cells: " + updateZoneCellArr.length);
 		updateZoneCellArr.forEach(function(zoneCell){
 			self.zoneCellMap[self.generateKeyFromZoneCell(zoneCell)] = zoneCell;
 		});

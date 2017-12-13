@@ -1,5 +1,6 @@
 package com.asl.snowplow.controller;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -24,11 +25,12 @@ public class ZoneCellMappingController {
 	WorldState worldState;
 	
 	@RequestMapping(value="/issue", method=RequestMethod.POST)
-	public @ResponseBody String issueCommand(@RequestBody List<ZoneCell> updateList){
+	public @ResponseBody Collection<ZoneCell> issueCommand(@RequestBody List<ZoneCell> updateList){
 		for(ZoneCell z: updateList){
 			worldState.getZoneCellMap().put(z.getCoordinates(), z);
 		}
-		return "";
+		//System.out.println("Received issue command size: " + updateList.size() + ", size of total zonecell map: " + worldState.getZoneCellMap().size());
+		return worldState.getZoneCellMap().values();
 	}
 	
 //	@MessageMapping("/zones/issue")

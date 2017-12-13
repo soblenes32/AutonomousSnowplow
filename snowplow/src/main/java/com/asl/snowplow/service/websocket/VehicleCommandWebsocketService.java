@@ -29,8 +29,8 @@ public class VehicleCommandWebsocketService {
 //		}
 //	}
 	
-	public synchronized void sendVehicleCommandQueue(Queue<VehicleCommand> vehicleCommandList) {
-		clientFetchQueueService.setVehicleCommandList(vehicleCommandList);
-	}
+//	public synchronized void sendVehicleCommandQueue(Queue<VehicleCommand> vehicleCommandList) {
+//		clientFetchQueueService.setVehicleCommandList(vehicleCommandList);
+//	}
 	
 }

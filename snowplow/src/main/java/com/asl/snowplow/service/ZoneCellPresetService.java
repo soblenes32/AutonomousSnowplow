@@ -32,25 +32,19 @@ public class ZoneCellPresetService {
 	@Inject
 	ClientFetchQueueService clientFetchQueueService;
 	
-	@Value("${snowplow.config.zonecellpresetfile}")
-	String zoneCellPresetFile;
+	@Value("${snowplow.config.zonecellpresetpath}")
+	String zonecellPresetDefaultPath;
 	
-	private static final String PRESET_LOCAL_DIRECTORY = "/home/pi/snowplow/zonecellpresets";
+	@Value("${snowplow.config.zonecellpresetdir}")
+	String zonecellPresetDir;
 	
 	@PostConstruct
 	private void init(){
-		//Create the preset local directory if it doesn't exist
-		File file = new File(PRESET_LOCAL_DIRECTORY);
-		file.mkdirs();
-		
-		//Load the initial zone cell preset file if available
-		if(zoneCellPresetFile != null) {
-			loadPresetFromFile(zoneCellPresetFile);
-		}
+		loadPresetFromFile(zonecellPresetDefaultPath);
 	}
 	
 	public List<String> listPresets(){
-		File directory = new File(PRESET_LOCAL_DIRECTORY);
+		File directory = new File(zonecellPresetDir);
 		return Arrays.asList(directory.listFiles()).stream()
 			.map(f->f.getName())
 			.collect(Collectors.toList());
@@ -59,28 +53,47 @@ public class ZoneCellPresetService {
 	public void savePresetToFile(String presetName){
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			mapper.writeValue(new File(PRESET_LOCAL_DIRECTORY+"/"+presetName), worldState.getZoneCellMap().values());
+			mapper.writeValue(new File(zonecellPresetDir+"/"+presetName), worldState.getZoneCellMap().values());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
 	}
 	
-	public void loadPresetFromFile(String presetName){
+	public boolean loadPresetFromFile(String fullFilePath){
+		return loadPresetFromFile(fullFilePath, true);
+	}
+	
+	public boolean loadPresetFromFile(String fileName, boolean isFullPath){
+		//Append the full path if only the file was provided
+		String fullFilePath = fileName;
+		if(!isFullPath) {
+			fullFilePath = zonecellPresetDir +fullFilePath;
+		}
+		//Determine if config file exists
+		File f = new File(fullFilePath);
+		if(!f.exists()) {
+			System.out.println("Unable to locate a zonecell preset file at " + fullFilePath);
+			return false;
+		}
+				
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			TypeReference<List<ZoneCell>> typeRef = new TypeReference<List<ZoneCell>>() {};
-			List<ZoneCell> zcList = mapper.readValue(new File(PRESET_LOCAL_DIRECTORY+"/"+presetName), typeRef);
+			List<ZoneCell> zcList = mapper.readValue(f, typeRef);
 			Map<Point, ZoneCell> zoneCellMap = new HashMap<>();
 			for(ZoneCell zc: zcList) {
 				zoneCellMap.put(zc.getCoordinates(), zc);
 			}
 			worldState.setZoneCellMap(zoneCellMap);
 		} catch (Exception e) {
-			System.out.println("*IMPORTANT* - NOT loading default zonecell file: " + PRESET_LOCAL_DIRECTORY+"/"+presetName + " because the file was not found.");
-			//e.printStackTrace();
+			System.out.println("*IMPORTANT* - NOT loading default zonecell file: " + zonecellPresetDir + " because the file was not found.");
+			e.printStackTrace();
 		}
 		//zoneCellWebsocketService.sendZoneCellUpdate();
 		clientFetchQueueService.setZoneCellList(worldState.getZoneCellMap().values());
+		
+		System.out.println("Zonecell presets were loaded. Size: " + worldState.getZoneCellMap().size());
+		return true;
 	}
 	
 }

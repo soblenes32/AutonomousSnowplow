@@ -18,9 +18,11 @@ import org.springframework.stereotype.Service;
 
 import com.asl.snowplow.model.AnchorState;
 import com.asl.snowplow.model.PositionMeasurement;
+import com.asl.snowplow.model.VehicleOperationMode;
 import com.asl.snowplow.model.VehicleState;
 import com.asl.snowplow.model.WorldState;
 import com.asl.snowplow.service.websocket.TelemetryWebsocketService;
+import com.asl.snowplow.util.Vector3DMixin;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -41,7 +43,7 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 	ClientFetchQueueService clientFetchQueueService;
 	
 	@Value("${snowplow.config.anchorpresetpath}")
-	String anchorPresetFile;
+	String anchorPresetPath;
 	
 	@Value("${snowplow.config.defaultheading}")
 	int defaultCalibrationHeading;
@@ -55,7 +57,7 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 	private static final int DATA_RATE 		= 9600;
 	private static final String PORT_NAME 	= "/dev/arduino";
 	private static final String LINEBREAK_TERMINATOR = "\n";
-	private static final float SCALE_SPEED	= 0.75f; //Multiplier applied to all speeds
+	private static final float SCALE_SPEED	= 0.85f; //Multiplier applied to all speeds
 	
 	//When set to true, upon the next heading reading, the offset will be set such that
 	//the current adjusted heading is equal to the snowplow.config.defaultheading
@@ -74,6 +76,10 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 		if(!setAnchorsFromConfig()) {
 			//Otherwise, just auto-set the anchor configurations
 			getAnchors();
+		} else {
+			System.out.println("Anchor configuration was loaded from the default file.");
+			//After setting the anchor configurations, then put the vehicle into autonomous mode
+			worldState.getVehicleState().setVehicleOperationMode(VehicleOperationMode.AUTONOMOUS);
 		}
 		
 		isReadyToCalibrateInitialHeading = true;
@@ -312,14 +318,16 @@ public class ArduinoRxTxUsbService implements SerialPortEventListener{
 		List<AnchorState> anchorStateList = null;
 	
 		//Determine if config file exists
-		File f = new File(anchorPresetFile);
+		File f = new File(anchorPresetPath);
 		if(!f.exists()) return false;
 		
 		//Load the configFile
 		ObjectMapper mapper = new ObjectMapper();
+		mapper.addMixIn(Vector3D.class, Vector3DMixin.class);
 		try {
-			anchorStateList = mapper.readValue(f, new TypeReference<List<String>>(){});
+			anchorStateList = mapper.readValue(f, new TypeReference<List<AnchorState>>(){});
 		}catch(Exception e) {
+			System.out.println("*IMPORTANT* - NOT loading default anchor preset file: " + anchorPresetPath + " because the file was not found.");
 			e.printStackTrace();
 			return false;
 		}

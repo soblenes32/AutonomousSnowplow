@@ -26,12 +26,13 @@ public class ZoneCellPresetController {
 
 	@RequestMapping(value="/load/{presetName}", method=RequestMethod.GET)
 	public @ResponseBody List<String> loadPreset(@PathVariable("presetName") String presetName) {
-		zoneCellPresetService.loadPresetFromFile(presetName);
+		zoneCellPresetService.loadPresetFromFile(presetName, false);
 		return zoneCellPresetService.listPresets();
 	}
 	
 	@RequestMapping(value="/save/{presetName}", method=RequestMethod.GET)
 	public @ResponseBody List<String> savePreset(@PathVariable("presetName") String presetName) {
+		System.out.println("saving preset: " + presetName);
 		zoneCellPresetService.savePresetToFile(presetName);
 		return zoneCellPresetService.listPresets();
 	}

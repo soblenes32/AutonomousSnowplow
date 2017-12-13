@@ -20,8 +20,8 @@ import com.asl.snowplow.model.ZoneCell;
  *******************************************************************************/
 @Service
 public class ClientFetchQueueService {
-	private Collection<ZoneCell> zoneCellList 			=  Collections.synchronizedList(new ArrayList<>());
-	private Queue<VehicleCommand> vehicleCommandList 	= null;
+	private Collection<ZoneCell> zoneCellList 			= Collections.synchronizedList(new ArrayList<>());
+	private Collection<VehicleCommand> vehicleCommandList = Collections.synchronizedList(new ArrayList<>());
 	private VehicleState vehicleState 					= null;
 	private List<AnchorState> anchorStateList 			= null;
 	private List<Point> lidarPointList 					= null;
@@ -30,7 +30,7 @@ public class ClientFetchQueueService {
 		synchronized(this) {
 			ClientFetchQueueService c = new ClientFetchQueueService();
 			c.zoneCellList = new ArrayList<ZoneCell>(zoneCellList);
-			c.vehicleCommandList = this.vehicleCommandList;
+			c.vehicleCommandList = new ArrayList<VehicleCommand>(this.vehicleCommandList);
 			c.vehicleState = this.vehicleState;
 			c.anchorStateList = this.anchorStateList;
 			c.lidarPointList = this.lidarPointList;
@@ -40,7 +40,7 @@ public class ClientFetchQueueService {
 	
 	public void clear() {
 		zoneCellList.clear();
-		vehicleCommandList = null;
+		//vehicleCommandList.clear();
 		vehicleState = null;
 		anchorStateList = null;
 		lidarPointList = null;
@@ -53,14 +53,16 @@ public class ClientFetchQueueService {
 		this.zoneCellList.clear();
 		this.zoneCellList.addAll(zoneCellList);
 	}
-	public Queue<VehicleCommand> getVehicleCommandList() {
+	public Collection<VehicleCommand> getVehicleCommandList() {
 		synchronized(this) {
 			return vehicleCommandList;
 		}
 	}
 	public void setVehicleCommandList(Queue<VehicleCommand> vehicleCommandList) {
+		System.out.println("Setting commandlist to size: " + vehicleCommandList.size());
 		synchronized(this) {
-			this.vehicleCommandList = vehicleCommandList;
+			this.vehicleCommandList.clear();
+			this.vehicleCommandList.addAll(vehicleCommandList);
 		}
 	}
 	public VehicleState getVehicleState() {

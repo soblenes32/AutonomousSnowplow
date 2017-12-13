@@ -15,6 +15,7 @@ import com.asl.snowplow.service.ClientFetchQueueService;
 import com.asl.snowplow.service.MotorDesignator;
 import com.asl.snowplow.service.SnowVolumeSimulationService;
 import com.asl.snowplow.service.TelemetryFilterService;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Service
 public class VehicleState {
@@ -59,6 +60,7 @@ public class VehicleState {
 	//Map of the last n vehicle positions
 	private static final int MAX_HISTORICAL_POSITIONS = 4;
 
+	@JsonIgnore
 	private Map<Long, Point> historicalPositionMap = new HashMap<>();
 	private Map<Long, PositionMeasurement> historicalSensorReadingMap = new HashMap<>();
 	
@@ -228,6 +230,7 @@ public class VehicleState {
 		return vehicleOperationMode;
 	}
 	public void setVehicleOperationMode(VehicleOperationMode vehicleOperationMode) {
+		System.out.println("Setting vehicle operation mode: " + vehicleOperationMode);
 		this.vehicleOperationMode = vehicleOperationMode;
 	}
 	public int getPlowReachRadius() {

@@ -1,7 +1,7 @@
 angular.module("SnowplowApp")
-.service("updaterService", function($rootScope, $interval, telemetryDataModelService, vehicleCommandDataModelService, zoneCellDataModelService, updaterAjaxService){
+.service("updaterService", function($rootScope, $interval, modelService, telemetryDataModelService, vehicleCommandDataModelService, zoneCellDataModelService, updaterAjaxService){
 	var self = this;
-	
+	var vehicleOperationMode = 0;
 	
 	/*********************************************
 	 ************** Fetch methods ****************
@@ -30,6 +30,15 @@ angular.module("SnowplowApp")
 			//Lidar detection list update
 			if(p.lidarPointList && p.lidarPointList.length > 0){
 				telemetryDataModelService.updateLidarDetections(p.lidarPointList);
+			}
+			
+			//Allow the operating mode to be updated before it is interacted with by the user
+			if(p.vehicleState && p.vehicleState.vehicleOperationMode){
+				switch(p.vehicleState.vehicleOperationMode){
+					case 'COMMAND_QUEUE': modelService.controlMode = 0; break;
+					case 'PAUSED': modelService.controlMode = 1; break;
+					case 'AUTONOMOUS': modelService.controlMode = 2; break;
+				}
 			}
 			
 		}, function(err){
@@ -72,13 +81,24 @@ angular.module("SnowplowApp")
 	 * Zonecell update methods
 	 *********************************************************************************/
 	this.sendZoneCellData = function(d){
-		updaterAjaxService.sendZoneCellData(d);
+		//console.log("sending zonecell data: ");
+		//console.dir(d);
+		updaterAjaxService.sendZoneCellData(d).then(function(response){
+			zoneCellDataModelService.updateZoneCells(response.data);
+		}, function(err){
+			console.log("Failure to transmit zonecell data");
+			console.dir(err);
+		});
 	}
 	
+	/*********************************************
+	 ********** Initial zonecell fetch ************
+	 *********************************************/
+	this.sendZoneCellData([]);
 
 	/*********************************************
 	 ************** Fetch Execution ****************
 	 *********************************************/
 	
-	$interval(self.fetchUpdate, 200);
+	$interval(self.fetchUpdate, 400);
 }); 

@@ -34,7 +34,7 @@ public class VehicleCommandController {
 		if(worldState.getVehicleState().getVehicleOperationMode() != VehicleOperationMode.AUTONOMOUS){
 			vehicleCommandQueueService.issueCommand(vc);
 		}
-		return "";
+		return ""; //"Size of queue: "+vehicleCommandQueueService.getVehicleCommandQueue().size();
 	}
 	
 	@RequestMapping(value = "/rescend", method=RequestMethod.POST)
